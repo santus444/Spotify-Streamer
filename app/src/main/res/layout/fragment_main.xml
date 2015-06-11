@@ -16,8 +16,9 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="@string/searchDefaultText"
-        android:textStyle="normal|italic" />
-    
+        android:textStyle="normal|italic"
+        android:imeOptions="actionDone"/>
+
     <ListView
         android:id="@+id/listview_search"
         android:layout_width="match_parent"
