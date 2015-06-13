@@ -6,34 +6,30 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Album;
-import kaaes.spotify.webapi.android.models.AlbumSimple;
-import kaaes.spotify.webapi.android.models.AlbumsPager;
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Pager;
 
+import com.santoshmandadi.spotifystreamer.app.ArtistObject;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
     final String LOG_TAG = MainActivityFragment.class.getSimpleName();
-    private ArrayAdapter<String> searchResultsAdapter;
+    private CustomArtistArrayAdapter searchResultsAdapter;
     EditText searchArtist;
 
     public MainActivityFragment() {
@@ -62,8 +58,10 @@ public class MainActivityFragment extends Fragment {
             }
         });
         List<String> listOfArtists = new ArrayList<>();
+        List<String> listOfArtistImages = new ArrayList<>();
+
       //  searchResultsAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview,listOfArtists);
-        searchResultsAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview,listOfArtists);
+        searchResultsAdapter = new CustomArtistArrayAdapter(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview, R.id.list_item_artist_imageview,listOfArtists, listOfArtistImages);
         ListView lv = (ListView)rootView.findViewById(R.id.listview_search);
         lv.setAdapter(searchResultsAdapter);
         return rootView;
@@ -71,31 +69,39 @@ public class MainActivityFragment extends Fragment {
 
 
 
-    public class FetchAlbums extends AsyncTask<String, Void , String[]>{
+    public class FetchAlbums extends AsyncTask<String, Void , List<ArtistObject>>{
 
         @Override
-        protected String[] doInBackground(String... params){
+        protected List<ArtistObject> doInBackground(String... params){
             SpotifyApi spotifyApi = new SpotifyApi();
             SpotifyService spotifyService = spotifyApi.getService();
-            AlbumsPager artistAlbums = spotifyService.searchAlbums(params[0]);
-            Pager<AlbumSimple> albums = artistAlbums.albums;
-            String[] albumNames = new String[albums.items.size()];
+            ArtistsPager artistsSearchResults = spotifyService.searchArtists(params[0]);
+            Pager<Artist> artists = artistsSearchResults.artists;
             int count = 0;
-            for(AlbumSimple albumSimple: albums.items){
-                albumNames[count] = albumSimple.name;
+            Log.d(LOG_TAG,"Total Number of results: " + artists.items.size());
+            List<ArtistObject> artistsList = new ArrayList<>();
+            for(Artist artist: artists.items){
+                String image;
+                try{
+                    image = artist.images.get(0).url;
+                }catch (IndexOutOfBoundsException e){
+                     image = "http://cache.filehippo.com/img/ex/2762__Spotify_icon.png";
+                }
+                Log.d(LOG_TAG,"Artist Name: " + artist.name+" Image: "+image);
+                artistsList.add(count, new ArtistObject(artist.name,image));
                 count++;
             }
 
-            return albumNames;
+            return artistsList;
         }
 
         @Override
-        protected void onPostExecute(String[] strings) {
-            super.onPostExecute(strings);
+        protected void onPostExecute(List<ArtistObject> artistObjectList) {
+           // super.onPostExecute(List<ArtistObject> artistObjectList);
             searchResultsAdapter.clear();
-            for(String album: strings){
-                searchResultsAdapter.add(album);
-                Log.e(LOG_TAG, album);
+            for(ArtistObject  artist: artistObjectList){
+                searchResultsAdapter.add(artist.getName(), artist.getImage());
+                Log.e(LOG_TAG, artist.getName() + " Image: "+ artist.getImage());
             }
         }
     }
