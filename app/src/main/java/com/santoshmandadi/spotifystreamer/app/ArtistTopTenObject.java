@@ -7,11 +7,13 @@ public class ArtistTopTenObject {
     String image;
     String trackName;
     String albumName;
+
     public ArtistTopTenObject(String image, String trackName, String albumName) {
         this.image = image;
         this.trackName = trackName;
         this.albumName = albumName;
     }
+
     public String getAlbumName() {
         return albumName;
     }

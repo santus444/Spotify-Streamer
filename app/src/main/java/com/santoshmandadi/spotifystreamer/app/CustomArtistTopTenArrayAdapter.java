@@ -11,15 +11,15 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by santosh on 6/13/15.
  */
-public class CustomArtistTopTenArrayAdapter extends ArrayAdapter<ArtistTopTenObject>{
+public class CustomArtistTopTenArrayAdapter extends ArrayAdapter<ArtistTopTenObject> {
     List<ArtistTopTenObject> artistTopTenObjects;
     Context context;
-    int resource, trackNameTextViewResouceId, albumNameTextViewResourceId,albumImageViewResourceId;
+    int resource, trackNameTextViewResouceId, albumNameTextViewResourceId, albumImageViewResourceId;
+
     public CustomArtistTopTenArrayAdapter(Context context, int resource, int imageViewResourceId, int textViewResourceId1, int textViewResourceId2, List<ArtistTopTenObject> objects) {
         super(context, resource, textViewResourceId1, objects);
         this.context = context;
@@ -46,20 +46,20 @@ public class CustomArtistTopTenArrayAdapter extends ArrayAdapter<ArtistTopTenObj
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         MyViewHolder holder = null;
-        if(row == null){
-            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (row == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
             holder = new MyViewHolder(row);
             row.setTag(holder);
-        }else{
-            holder = (MyViewHolder)row.getTag();
+        } else {
+            holder = (MyViewHolder) row.getTag();
         }
         holder.trackTitleTextView.setText(artistTopTenObjects.get(position).getTrackName());
         holder.albumTitleTextView.setText(artistTopTenObjects.get(position).getAlbumName());
-        if(artistTopTenObjects.get(position).getImage() != "")
+        if (artistTopTenObjects.get(position).getImage() != "")
             Picasso.with(context).load(artistTopTenObjects.get(position).getImage()).into(holder.albumImageView);
         else
-        holder.albumImageView.setImageResource(R.mipmap.ic_launcher);
+            holder.albumImageView.setImageResource(R.mipmap.ic_launcher);
 
         return row;
     }
@@ -68,10 +68,10 @@ public class CustomArtistTopTenArrayAdapter extends ArrayAdapter<ArtistTopTenObj
         ImageView albumImageView;
         TextView albumTitleTextView, trackTitleTextView;
 
-        MyViewHolder(View v){
-            albumImageView = (ImageView)v.findViewById(albumImageViewResourceId);
-            albumTitleTextView = (TextView)v.findViewById(trackNameTextViewResouceId);
-            trackTitleTextView = (TextView)v.findViewById(albumNameTextViewResourceId);
+        MyViewHolder(View v) {
+            albumImageView = (ImageView) v.findViewById(albumImageViewResourceId);
+            albumTitleTextView = (TextView) v.findViewById(trackNameTextViewResouceId);
+            trackTitleTextView = (TextView) v.findViewById(albumNameTextViewResourceId);
 
         }
     }

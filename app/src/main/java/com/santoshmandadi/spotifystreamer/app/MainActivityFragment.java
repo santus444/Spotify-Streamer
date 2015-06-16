@@ -28,6 +28,7 @@ import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Image;
+
 import com.santoshmandadi.spotifystreamer.app.ArtistObject;
 
 /**
@@ -35,8 +36,8 @@ import com.santoshmandadi.spotifystreamer.app.ArtistObject;
  */
 public class MainActivityFragment extends Fragment {
     final String LOG_TAG = MainActivityFragment.class.getSimpleName();
-    private CustomArtistArrayAdapter searchResultsAdapter;
     EditText searchArtist;
+    private CustomArtistArrayAdapter searchResultsAdapter;
 
     public MainActivityFragment() {
     }
@@ -46,30 +47,31 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        searchArtist = (EditText)rootView.findViewById(R.id.editTextArtistName);
+        searchArtist = (EditText) rootView.findViewById(R.id.editTextArtistName);
         searchArtist.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 String text = searchArtist.getText().toString().trim();
-                if(actionId== EditorInfo.IME_ACTION_DONE){
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     FetchAlbums fetchAlbums = new FetchAlbums();
                     fetchAlbums.execute(text);
+                    return false;
+                }
                 return false;
             }
-                return false;
-        }});
+        });
 
         List<ArtistObject> listOfArtistObjects = new ArrayList<>();
-        searchResultsAdapter = new CustomArtistArrayAdapter(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview, R.id.list_item_artist_imageview,listOfArtistObjects);
-        ListView lv = (ListView)rootView.findViewById(R.id.listview_search);
+        searchResultsAdapter = new CustomArtistArrayAdapter(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview, R.id.list_item_artist_imageview, listOfArtistObjects);
+        ListView lv = (ListView) rootView.findViewById(R.id.listview_search);
         lv.setAdapter(searchResultsAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String artistId = searchResultsAdapter.getItem(position).getId();
-                Intent intent = new Intent(getActivity(),ArtistDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), ArtistDetailsActivity.class);
                 intent.putExtra(Intent.EXTRA_TEXT, artistId);
-                intent.putExtra("artist",searchResultsAdapter.getItem(position).getName());
+                intent.putExtra("artist", searchResultsAdapter.getItem(position).getName());
                 startActivity(intent);
             }
         });
@@ -77,11 +79,10 @@ public class MainActivityFragment extends Fragment {
     }
 
 
-
-    private class FetchAlbums extends AsyncTask<String, Void , List<ArtistObject>>{
+    private class FetchAlbums extends AsyncTask<String, Void, List<ArtistObject>> {
 
         @Override
-        protected List<ArtistObject> doInBackground(String... params){
+        protected List<ArtistObject> doInBackground(String... params) {
             SpotifyApi spotifyApi = new SpotifyApi();
             SpotifyService spotifyService = spotifyApi.getService();
             ArtistsPager artistsSearchResults = spotifyService.searchArtists(params[0]);
@@ -89,18 +90,17 @@ public class MainActivityFragment extends Fragment {
             int count = 0;
             Log.d(LOG_TAG, "Total Number of results: " + artists.items.size());
             List<ArtistObject> artistsList = new ArrayList<>();
-            for(Artist artist: artists.items){
+            for (Artist artist : artists.items) {
                 String image;
                 int size = artist.images.size();
                 Log.d(LOG_TAG, "Artist Name: " + artist.name + " Image: " + size);
 
-                if(size>0) {
-                    image = artist.images.get(size-1).url;
-                }else {
+                if (size > 0) {
+                    image = artist.images.get(size - 1).url;
+                } else {
                     image = "";
                 }
-                //Log.d(LOG_TAG,"Artist Name: " + artist.name+" Image: "+image);
-                artistsList.add(count, new ArtistObject(artist.name,image, artist.id));
+                artistsList.add(count, new ArtistObject(artist.name, image, artist.id));
                 count++;
             }
 
@@ -109,14 +109,12 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<ArtistObject> artistObjectList) {
-           // super.onPostExecute(List<ArtistObject> artistObjectList);
             searchResultsAdapter.clear();
-            if(artistObjectList.size()>0) {
+            if (artistObjectList.size() > 0) {
                 for (ArtistObject artist : artistObjectList) {
                     searchResultsAdapter.add(artist);
-                    // Log.e(LOG_TAG, artist.getName() + " Image: "+ artist.getImage());
                 }
-            }else{
+            } else {
 
             }
         }

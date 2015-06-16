@@ -2,5 +2,9 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="listItemHeight">48dp</dimen> <!-- As per Material design List item guidelines-->
+    <dimen name="listItemHeight">72dp</dimen> <!-- As per Material design List item guidelines https://www.google.com/design/spec/layout/metrics-keylines.html#metrics-keylines-keylines-spacing-->
+    <dimen name="imageWidth">72dp</dimen>
+    <dimen name="imagePadding">8dp</dimen>
+    <dimen name="textViewPadding">8dp</dimen>
+
 </resources>

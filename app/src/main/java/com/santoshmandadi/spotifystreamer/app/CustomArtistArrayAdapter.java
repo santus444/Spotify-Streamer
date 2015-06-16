@@ -20,7 +20,8 @@ public class CustomArtistArrayAdapter extends ArrayAdapter<ArtistObject> {
     Context context;
     int resource, textViewResourceID, imageViewResourceID;
     List<ArtistObject> listOfArtistObjects;
-    public CustomArtistArrayAdapter(Context context, int resource, int textViewResourceID,int imageViewResourceID, List<ArtistObject> listOfArtistObjects) {
+
+    public CustomArtistArrayAdapter(Context context, int resource, int textViewResourceID, int imageViewResourceID, List<ArtistObject> listOfArtistObjects) {
         super(context, resource, textViewResourceID, listOfArtistObjects);
         this.context = context;
         this.resource = resource;
@@ -39,19 +40,19 @@ public class CustomArtistArrayAdapter extends ArrayAdapter<ArtistObject> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         MyViewHolder holder = null;
-        if (row == null){
-            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (row == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
             holder = new MyViewHolder(row);
             row.setTag(holder);
-        }else{
-            holder = (MyViewHolder)row.getTag();
+        } else {
+            holder = (MyViewHolder) row.getTag();
         }
         holder.artistNameTextView.setText(listOfArtistObjects.get(position).getName());
-        if(listOfArtistObjects.get(position).getImage() != "")
-        Picasso.with(context).load(listOfArtistObjects.get(position).getImage()).into(holder.albumImageView);
+        if (listOfArtistObjects.get(position).getImage() != "")
+            Picasso.with(context).load(listOfArtistObjects.get(position).getImage()).into(holder.albumImageView);
         else
-        holder.albumImageView.setImageResource(R.mipmap.ic_launcher);
+            holder.albumImageView.setImageResource(R.mipmap.ic_launcher);
 
         return row;
     }
@@ -62,7 +63,7 @@ public class CustomArtistArrayAdapter extends ArrayAdapter<ArtistObject> {
 
     @Override
     public ArtistObject getItem(int position) {
-         super.getItem(position);
+        super.getItem(position);
         return listOfArtistObjects.get(position);
     }
 
@@ -70,9 +71,9 @@ public class CustomArtistArrayAdapter extends ArrayAdapter<ArtistObject> {
         ImageView albumImageView;
         TextView artistNameTextView;
 
-        MyViewHolder(View v){
-            albumImageView = (ImageView)v.findViewById(imageViewResourceID);
-            artistNameTextView = (TextView)v.findViewById(textViewResourceID);
+        MyViewHolder(View v) {
+            albumImageView = (ImageView) v.findViewById(imageViewResourceID);
+            artistNameTextView = (TextView) v.findViewById(textViewResourceID);
 
         }
     }
