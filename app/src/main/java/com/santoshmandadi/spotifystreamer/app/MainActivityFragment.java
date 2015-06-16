@@ -60,7 +60,6 @@ public class MainActivityFragment extends Fragment {
         }});
 
         List<ArtistObject> listOfArtistObjects = new ArrayList<>();
-
         searchResultsAdapter = new CustomArtistArrayAdapter(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview, R.id.list_item_artist_imageview,listOfArtistObjects);
         ListView lv = (ListView)rootView.findViewById(R.id.listview_search);
         lv.setAdapter(searchResultsAdapter);
@@ -118,7 +117,6 @@ public class MainActivityFragment extends Fragment {
                     // Log.e(LOG_TAG, artist.getName() + " Image: "+ artist.getImage());
                 }
             }else{
-                    Toast.makeText(getActivity(), "No artist found, please change the search criteria", Toast.LENGTH_SHORT).show();
 
             }
         }
