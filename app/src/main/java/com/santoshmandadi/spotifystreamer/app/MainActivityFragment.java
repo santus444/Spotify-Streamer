@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,9 +112,14 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(List<ArtistObject> artistObjectList) {
            // super.onPostExecute(List<ArtistObject> artistObjectList);
             searchResultsAdapter.clear();
-            for(ArtistObject  artist: artistObjectList){
-                searchResultsAdapter.add(artist);
-               // Log.e(LOG_TAG, artist.getName() + " Image: "+ artist.getImage());
+            if(artistObjectList.size()>0) {
+                for (ArtistObject artist : artistObjectList) {
+                    searchResultsAdapter.add(artist);
+                    // Log.e(LOG_TAG, artist.getName() + " Image: "+ artist.getImage());
+                }
+            }else{
+                    Toast.makeText(getActivity(), "No artist found, please change the search criteria", Toast.LENGTH_SHORT).show();
+
             }
         }
     }

@@ -44,9 +44,6 @@ public class ArtistDetailsActivityFragment extends Fragment {
 
         FetchArtistTopTen fetchArtistTopTen = new FetchArtistTopTen();
         fetchArtistTopTen.execute(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT));
-       /* ActionBar ab = getActivity().getActionBar();
-        ab.setTitle("Artist Top Ten");
-        ab.setSubtitle(getActivity().getIntent().getStringExtra("artist"));*/
 
         return rootView;
     }
@@ -61,7 +58,7 @@ public class ArtistDetailsActivityFragment extends Fragment {
             options.put("country", "US");
             Log.d(LOG_TAG, "Artist ID: "+params[0]);
             Tracks tracks = spotifyService.getArtistTopTrack(params[0],options);
-            List<ArtistTopTenObject> artistTopTenObjectList = new ArrayList<>();
+            List<ArtistTopTenObject> artistTopTenObjectList = new ArrayList<>(10);
             List<Track> tracksList = tracks.tracks;
             int tracksCount = 0;
             for(Track track: tracksList){
@@ -76,6 +73,7 @@ public class ArtistDetailsActivityFragment extends Fragment {
                     break;
                 }
             }
+            Log.d(LOG_TAG, "Artist Top Tracks count: "+artistTopTenObjectList.size());
             return artistTopTenObjectList;
         }
 
@@ -83,6 +81,8 @@ public class ArtistDetailsActivityFragment extends Fragment {
         protected void onPostExecute(List<ArtistTopTenObject> artistTopTenObjects) {
             super.onPostExecute(artistTopTenObjects);
             artistTopTenArrayAdapter.clear();
+            Log.d(LOG_TAG, "Artist Top Tracks count in onPoctExecute: " + artistTopTenObjects.size());
+
             for (ArtistTopTenObject artistTopTenObject : artistTopTenObjects){
                 artistTopTenArrayAdapter.add(artistTopTenObject);
             }

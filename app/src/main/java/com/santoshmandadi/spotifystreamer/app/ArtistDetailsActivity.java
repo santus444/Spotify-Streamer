@@ -1,5 +1,7 @@
 package com.santoshmandadi.spotifystreamer.app;
 
+import android.app.ActionBar;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,6 +21,8 @@ public class ArtistDetailsActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_artist_details, menu);
+        setActionBarTitle(getString(R.string.title_activity_artist_details));
+        getSupportActionBar().setSubtitle(this.getIntent().getStringExtra("artist"));
         return true;
     }
 

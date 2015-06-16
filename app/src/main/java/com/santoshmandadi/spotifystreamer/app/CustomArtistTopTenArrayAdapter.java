@@ -39,7 +39,6 @@ public class CustomArtistTopTenArrayAdapter extends ArrayAdapter<ArtistTopTenObj
 
     @Override
     public void add(ArtistTopTenObject object) {
-        super.add(object);
         artistTopTenObjects.add(object);
     }
 
