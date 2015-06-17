@@ -38,6 +38,7 @@ public class MainActivityFragment extends Fragment {
     final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     EditText searchArtist;
     private CustomArtistArrayAdapter searchResultsAdapter;
+    ArrayList<ArtistObject> listOfArtistObjects;
 
     public MainActivityFragment() {
     }
@@ -46,22 +47,24 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        searchArtist = (EditText) rootView.findViewById(R.id.editTextArtistName);
-        searchArtist.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String text = searchArtist.getText().toString().trim();
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    FetchAlbums fetchAlbums = new FetchAlbums();
-                    fetchAlbums.execute(text);
+        if(savedInstanceState == null || !savedInstanceState.containsKey("key")) {
+            searchArtist = (EditText) rootView.findViewById(R.id.editTextArtistName);
+            searchArtist.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    String text = searchArtist.getText().toString().trim();
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        FetchAlbums fetchAlbums = new FetchAlbums();
+                        fetchAlbums.execute(text);
+                        return false;
+                    }
                     return false;
                 }
-                return false;
-            }
-        });
-
-        List<ArtistObject> listOfArtistObjects = new ArrayList<>();
+            });
+            listOfArtistObjects = new ArrayList<ArtistObject>();
+        }else{
+            listOfArtistObjects = savedInstanceState.getParcelableArrayList("key");
+        }
         searchResultsAdapter = new CustomArtistArrayAdapter(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview, R.id.list_item_artist_imageview, listOfArtistObjects);
         ListView lv = (ListView) rootView.findViewById(R.id.listview_search);
         lv.setAdapter(searchResultsAdapter);
@@ -78,6 +81,11 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("key", listOfArtistObjects);
+        super.onSaveInstanceState(outState);
+    }
 
     private class FetchAlbums extends AsyncTask<String, Void, List<ArtistObject>> {
 
