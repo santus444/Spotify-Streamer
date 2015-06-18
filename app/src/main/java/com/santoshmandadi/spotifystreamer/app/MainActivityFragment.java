@@ -16,18 +16,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Image;
+import retrofit.RetrofitError;
 
 import com.santoshmandadi.spotifystreamer.app.ArtistObject;
 
@@ -35,8 +40,11 @@ import com.santoshmandadi.spotifystreamer.app.ArtistObject;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+    @InjectView(R.id.editTextArtistName) SearchView searchArtist;
+    @InjectView(R.id.listview_search) ListView lv;
+
     final String LOG_TAG = MainActivityFragment.class.getSimpleName();
-    EditText searchArtist;
+
     private CustomArtistArrayAdapter searchResultsAdapter;
     ArrayList<ArtistObject> listOfArtistObjects;
 
@@ -48,25 +56,27 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         if(savedInstanceState == null || !savedInstanceState.containsKey("key")) {
-            searchArtist = (EditText) rootView.findViewById(R.id.editTextArtistName);
-            searchArtist.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            ButterKnife.inject(this, rootView);
+            searchArtist.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    String text = searchArtist.getText().toString().trim();
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                public boolean onQueryTextSubmit(String query) {
+                        searchArtist.clearFocus();
                         FetchAlbums fetchAlbums = new FetchAlbums();
-                        fetchAlbums.execute(text);
-                        return false;
-                    }
+                        fetchAlbums.execute(query);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
                     return false;
                 }
             });
+
             listOfArtistObjects = new ArrayList<ArtistObject>();
         }else{
             listOfArtistObjects = savedInstanceState.getParcelableArrayList("key");
         }
         searchResultsAdapter = new CustomArtistArrayAdapter(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview, R.id.list_item_artist_imageview, listOfArtistObjects);
-        ListView lv = (ListView) rootView.findViewById(R.id.listview_search);
         lv.setAdapter(searchResultsAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -83,8 +93,8 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("key", listOfArtistObjects);
         super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("key", listOfArtistObjects);
     }
 
     private class FetchAlbums extends AsyncTask<String, Void, List<ArtistObject>> {
@@ -93,11 +103,13 @@ public class MainActivityFragment extends Fragment {
         protected List<ArtistObject> doInBackground(String... params) {
             SpotifyApi spotifyApi = new SpotifyApi();
             SpotifyService spotifyService = spotifyApi.getService();
-            ArtistsPager artistsSearchResults = spotifyService.searchArtists(params[0]);
+            List<ArtistObject> artistsList = new ArrayList<>();
+            try {
+                ArtistsPager artistsSearchResults = spotifyService.searchArtists(params[0]);
+
             Pager<Artist> artists = artistsSearchResults.artists;
             int count = 0;
             Log.d(LOG_TAG, "Total Number of results: " + artists.items.size());
-            List<ArtistObject> artistsList = new ArrayList<>();
             for (Artist artist : artists.items) {
                 String image;
                 int size = artist.images.size();
@@ -111,6 +123,11 @@ public class MainActivityFragment extends Fragment {
                 artistsList.add(count, new ArtistObject(artist.name, image, artist.id));
                 count++;
             }
+            }catch (RetrofitError error){
+                SpotifyError spotifyError = SpotifyError.fromRetrofitError(error);
+                Log.e(LOG_TAG, "RetrofitError: "+spotifyError.getErrorDetails() + error.getKind());
+                return null;
+            }
 
             return artistsList;
         }
@@ -118,15 +135,18 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(List<ArtistObject> artistObjectList) {
             searchResultsAdapter.clear();
+            if(artistObjectList != null){
             if (artistObjectList.size() > 0) {
                 for (ArtistObject artist : artistObjectList) {
                     searchResultsAdapter.add(artist);
                 }
             } else {
-
+                Toast.makeText(getActivity(), "Sorry, Your search did not yield any results !", Toast.LENGTH_SHORT).show();
             }
-        }
+        }else{
+                Toast.makeText(getActivity(), "Sorry, Count not connect to server", Toast.LENGTH_SHORT).show();
+            }
     }
-
+    }
 
 }

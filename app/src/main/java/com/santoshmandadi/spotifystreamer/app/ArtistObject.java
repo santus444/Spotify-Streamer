@@ -27,16 +27,6 @@ public class ArtistObject implements Parcelable {
         id = in.readString();
     }
 
-    public static final Parcelable.Creator<ArtistObject> CREATOR
-            = new Parcelable.Creator<ArtistObject>() {
-        public ArtistObject createFromParcel(Parcel in) {
-            return new ArtistObject(in);
-        }
-
-        public ArtistObject[] newArray(int size) {
-            return new ArtistObject[size];
-        }
-    };
 
     public ArtistObject(String name, String image, String id) {
         this.name = name;
@@ -60,4 +50,15 @@ public class ArtistObject implements Parcelable {
     public String toString() {
         return getName();
     }
+
+    public static final Parcelable.Creator<ArtistObject> CREATOR
+            = new Parcelable.Creator<ArtistObject>() {
+        public ArtistObject createFromParcel(Parcel in) {
+            return new ArtistObject(in);
+        }
+
+        public ArtistObject[] newArray(int size) {
+            return new ArtistObject[size];
+        }
+    };
 }

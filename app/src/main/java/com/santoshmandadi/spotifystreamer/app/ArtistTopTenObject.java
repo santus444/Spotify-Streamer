@@ -1,13 +1,21 @@
 package com.santoshmandadi.spotifystreamer.app;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by santosh on 6/13/15.
  */
-public class ArtistTopTenObject {
+public class ArtistTopTenObject implements Parcelable{
     String image;
     String trackName;
     String albumName;
 
+    public ArtistTopTenObject(Parcel in){
+        image = in.readString();
+        trackName = in.readString();
+        albumName = in.readString();
+    }
     public ArtistTopTenObject(String image, String trackName, String albumName) {
         this.image = image;
         this.trackName = trackName;
@@ -27,4 +35,26 @@ public class ArtistTopTenObject {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(image);
+        dest.writeString(trackName);
+        dest.writeString(albumName);
+    }
+
+    public static final Parcelable.Creator<ArtistTopTenObject> CREATOR
+            = new Parcelable.Creator<ArtistTopTenObject>() {
+        public ArtistTopTenObject createFromParcel(Parcel in) {
+            return new ArtistTopTenObject(in);
+        }
+
+        public ArtistTopTenObject[] newArray(int size) {
+            return new ArtistTopTenObject[size];
+        }
+    };
 }

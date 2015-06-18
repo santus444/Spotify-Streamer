@@ -1,6 +1,7 @@
 package com.santoshmandadi.spotifystreamer.app;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +13,8 @@ public class ArtistDetailsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_details);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
 
@@ -34,7 +37,11 @@ public class ArtistDetailsActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }else if(id == R.id.home){
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }

@@ -9,15 +9,14 @@
     tools:context=".MainActivityFragment"
     android:orientation="vertical">
 
-    <EditText
+    <SearchView
         android:id="@+id/editTextArtistName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:inputType="textPersonName"
-        android:hint="@string/searchDefaultText"
+        android:queryHint="@string/searchDefaultText"
         android:textStyle="normal|italic"
-        android:imeOptions="actionDone"/>
+        android:backgroundTint="@color/material_blue_grey_800"/>
 
     <ListView
         android:id="@+id/listview_search"

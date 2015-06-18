@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Track;
@@ -25,8 +27,11 @@ import kaaes.spotify.webapi.android.models.Tracks;
  * A placeholder fragment containing a simple view.
  */
 public class ArtistDetailsActivityFragment extends Fragment {
+
+    @InjectView(R.id.listview_topten) ListView lv;
     public String LOG_TAG = ArtistDetailsActivity.class.getSimpleName();
     private CustomArtistTopTenArrayAdapter artistTopTenArrayAdapter;
+    ArrayList<ArtistTopTenObject> artistTopTenObjectList;
 
     public ArtistDetailsActivityFragment() {
     }
@@ -35,16 +40,24 @@ public class ArtistDetailsActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_artist_details, container, false);
-        List<ArtistTopTenObject> artistTopTenObjectList = new ArrayList<>();
-
+        ButterKnife.inject(this, rootView);
+        if(savedInstanceState == null || !savedInstanceState.containsKey("key")) {
+            FetchArtistTopTen fetchArtistTopTen = new FetchArtistTopTen();
+            fetchArtistTopTen.execute(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT));
+            artistTopTenObjectList = new ArrayList<>();
+        }else{
+            artistTopTenObjectList = savedInstanceState.getParcelableArrayList("key");
+        }
         artistTopTenArrayAdapter = new CustomArtistTopTenArrayAdapter(getActivity(), R.layout.list_item_topten, R.id.list_item_toptenAlbumImage, R.id.track_name_textview, R.id.album_name_textview, artistTopTenObjectList);
-        ListView lv = (ListView) rootView.findViewById(R.id.listview_topten);
         lv.setAdapter(artistTopTenArrayAdapter);
 
-        FetchArtistTopTen fetchArtistTopTen = new FetchArtistTopTen();
-        fetchArtistTopTen.execute(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT));
-
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("key", artistTopTenObjectList);
     }
 
     private class FetchArtistTopTen extends AsyncTask<String, Void, List<ArtistTopTenObject>> {
