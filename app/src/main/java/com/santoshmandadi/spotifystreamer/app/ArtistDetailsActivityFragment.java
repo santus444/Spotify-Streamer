@@ -1,7 +1,10 @@
 package com.santoshmandadi.spotifystreamer.app;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -45,15 +48,15 @@ public class ArtistDetailsActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_artist_details, container, false);
         ButterKnife.inject(this, rootView);
-        artistTopTenArrayAdapter = new CustomArtistTopTenArrayAdapter(getActivity(), R.layout.list_item_topten, R.id.list_item_toptenAlbumImage, R.id.track_name_textview, R.id.album_name_textview, artistTopTenObjectList);
-        lv.setAdapter(artistTopTenArrayAdapter);
-        if (savedInstanceState == null || !savedInstanceState.containsKey("keyTracks")) {
+       if (savedInstanceState == null || !savedInstanceState.containsKey("keyTracks")) {
             FetchArtistTopTen fetchArtistTopTen = new FetchArtistTopTen();
             fetchArtistTopTen.execute(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT));
 
         } else {
             artistTopTenObjectList = savedInstanceState.getParcelableArrayList("keyTracks");
         }
+        artistTopTenArrayAdapter = new CustomArtistTopTenArrayAdapter(getActivity(), R.layout.list_item_topten, R.id.list_item_toptenAlbumImage, R.id.track_name_textview, R.id.album_name_textview, artistTopTenObjectList);
+        lv.setAdapter(artistTopTenArrayAdapter);
 
 
         return rootView;
@@ -81,22 +84,27 @@ public class ArtistDetailsActivityFragment extends Fragment {
             Log.d(LOG_TAG, "Artist ID: " + params[0]);
             List<ArtistTopTenObject> artistTopTenObjectList = new ArrayList<>(10);
             try {
-                Tracks tracks = spotifyService.getArtistTopTrack(params[0], options);
-                List<Track> tracksList = tracks.tracks;
-                int tracksCount = 0;
-                for (Track track : tracksList) {
-                    if (tracksCount < 10) {
-                        String image = "";
-                        if (track.album.images.size() > 0) {
-                            image = track.album.images.get(track.album.images.size() - 1).url;
+                if(new Util().isNetworkAvailable(getActivity())) {
+                    Tracks tracks = spotifyService.getArtistTopTrack(params[0], options);
+                    List<Track> tracksList = tracks.tracks;
+                    int tracksCount = 0;
+                    for (Track track : tracksList) {
+                        if (tracksCount < 10) {
+                            String image = "";
+                            if (track.album.images.size() > 0) {
+                                image = track.album.images.get(track.album.images.size() - 1).url;
+                            }
+                            artistTopTenObjectList.add(new ArtistTopTenObject(image, track.name, track.album.name));
+                            tracksCount++;
+                        } else {
+                            break;
                         }
-                        artistTopTenObjectList.add(new ArtistTopTenObject(image, track.name, track.album.name));
-                        tracksCount++;
-                    } else {
-                        break;
                     }
+                    Log.d(LOG_TAG, "Artist Top Tracks count: " + artistTopTenObjectList.size());
+                }else
+                {
+                    return null;
                 }
-                Log.d(LOG_TAG, "Artist Top Tracks count: " + artistTopTenObjectList.size());
 
             } catch (RetrofitError error) {
                 SpotifyError spotifyError = SpotifyError.fromRetrofitError(error);
@@ -119,14 +127,15 @@ public class ArtistDetailsActivityFragment extends Fragment {
                         artistTopTenArrayAdapter.add(artistTopTenObject);
                     }
                 } else {
-                    Toast.makeText(getActivity(), "This artist does not have any top tracks !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.no_top_tracks_message, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(getActivity(), "Sorry, Count not connect to server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.no_network_message, Toast.LENGTH_SHORT).show();
             }
 
         }
     }
+
 
 }
 

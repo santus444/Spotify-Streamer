@@ -5,4 +5,7 @@
     <string name="searchDefaultText">Artist</string>
     <string name="title_activity_artist_details">Top 10 Tracks</string>
     <string name="subtitle_artist_name">Artist</string>
+    <string name="no_top_tracks_message">This artist does not have any top tracks !</string>
+    <string name="no_network_message">Sorry, Count not connect to server</string>
+    <string name="no_results_message">Sorry, Your search did not yield any results !</string>
 </resources>

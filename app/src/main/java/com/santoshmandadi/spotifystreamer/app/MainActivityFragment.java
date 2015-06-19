@@ -50,37 +50,13 @@ public class MainActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.inject(this, rootView);
         if (savedInstanceState == null || !savedInstanceState.containsKey("keyArtist")) {
-            searchArtist.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    searchArtist.clearFocus();
-                    FetchAlbums fetchAlbums = new FetchAlbums();
-                    fetchAlbums.execute(query);
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-            });
-
+            searchArtist.setIconifiedByDefault(false);
+            this.setSearch();
         } else {
             listOfArtistObjects = savedInstanceState.getParcelableArrayList("keyArtist");
-            searchArtist.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    searchArtist.clearFocus();
-                    FetchAlbums fetchAlbums = new FetchAlbums();
-                    fetchAlbums.execute(query);
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-            });
+            //not setting iconifiedByDefault as false as it will be annoying if the user has not selected and we
+            //keep bringing up the keyboard when they rotate screen
+           this.setSearch();
         }
         searchResultsAdapter = new CustomArtistArrayAdapter(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview, R.id.list_item_artist_imageview, listOfArtistObjects);
         lv.setAdapter(searchResultsAdapter);
@@ -108,7 +84,9 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        progressDialog.dismiss();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     private class FetchAlbums extends AsyncTask<String, Void, List<ArtistObject>> {
@@ -124,7 +102,9 @@ public class MainActivityFragment extends Fragment {
             SpotifyService spotifyService = spotifyApi.getService();
             List<ArtistObject> artistsList = new ArrayList<>();
             try {
-                ArtistsPager artistsSearchResults = spotifyService.searchArtists(params[0]);
+                if(new Util().isNetworkAvailable(getActivity())) {
+
+                    ArtistsPager artistsSearchResults = spotifyService.searchArtists(params[0]);
 
                 Pager<Artist> artists = artistsSearchResults.artists;
                 int count = 0;
@@ -141,6 +121,10 @@ public class MainActivityFragment extends Fragment {
                     }
                     artistsList.add(count, new ArtistObject(artist.name, image, artist.id));
                     count++;
+                }
+                }else
+                {
+                    return null;
                 }
             } catch (RetrofitError error) {
                 SpotifyError spotifyError = SpotifyError.fromRetrofitError(error);
@@ -161,14 +145,30 @@ public class MainActivityFragment extends Fragment {
                         searchResultsAdapter.add(artist);
                     }
                 } else {
-                    Toast.makeText(getActivity(), "Sorry, Your search did not yield any results !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.no_results_message, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(getActivity(), "Sorry, Count not connect to server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.no_network_message, Toast.LENGTH_SHORT).show();
             }
         }
 
 
     }
 
+    private void setSearch(){
+        searchArtist.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchArtist.clearFocus();
+                FetchAlbums fetchAlbums = new FetchAlbums();
+                fetchAlbums.execute(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
 }
