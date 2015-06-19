@@ -23,11 +23,12 @@ public class CustomArtistTopTenArrayAdapter extends ArrayAdapter<ArtistTopTenObj
     public CustomArtistTopTenArrayAdapter(Context context, int resource, int imageViewResourceId, int textViewResourceId1, int textViewResourceId2, List<ArtistTopTenObject> objects) {
         super(context, resource, textViewResourceId1, objects);
         this.context = context;
-        this.artistTopTenObjects = objects;
         this.resource = resource;
         this.trackNameTextViewResouceId = textViewResourceId1;
         this.albumNameTextViewResourceId = textViewResourceId2;
         this.albumImageViewResourceId = imageViewResourceId;
+        this.artistTopTenObjects = objects;
+
 
     }
 

@@ -23,6 +23,7 @@ public class ArtistDetailsActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_artist_details, menu);
         setActionBarTitle(getString(R.string.title_activity_artist_details));
+        menu.findItem(R.id.action_settings).setVisible(false);
         getSupportActionBar().setSubtitle(this.getIntent().getStringExtra("artist"));
         return true;
     }
@@ -35,9 +36,7 @@ public class ArtistDetailsActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }else if(id == R.id.home){
+        if (id == R.id.home){
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }

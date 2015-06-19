@@ -7,7 +7,29 @@ import android.os.Parcelable;
  * Created by santosh on 6/10/15.
  */
 public class ArtistObject implements Parcelable {
+    public static final Parcelable.Creator<ArtistObject> CREATOR
+            = new Parcelable.Creator<ArtistObject>() {
+        public ArtistObject createFromParcel(Parcel in) {
+            return new ArtistObject(in);
+        }
+
+        public ArtistObject[] newArray(int size) {
+            return new ArtistObject[size];
+        }
+    };
     private String name, image, id;
+
+    private ArtistObject(Parcel in) {
+        name = in.readString();
+        image = in.readString();
+        id = in.readString();
+    }
+
+    public ArtistObject(String name, String image, String id) {
+        this.name = name;
+        this.image = image;
+        this.id = id;
+    }
 
     @Override
     public int describeContents() {
@@ -19,19 +41,6 @@ public class ArtistObject implements Parcelable {
         dest.writeString(name);
         dest.writeString(image);
         dest.writeString(id);
-    }
-
-    private ArtistObject (Parcel in) {
-        name = in.readString();
-        image = in.readString();
-        id = in.readString();
-    }
-
-
-    public ArtistObject(String name, String image, String id) {
-        this.name = name;
-        this.image = image;
-        this.id = id;
     }
 
     public String getName() {
@@ -50,15 +59,4 @@ public class ArtistObject implements Parcelable {
     public String toString() {
         return getName();
     }
-
-    public static final Parcelable.Creator<ArtistObject> CREATOR
-            = new Parcelable.Creator<ArtistObject>() {
-        public ArtistObject createFromParcel(Parcel in) {
-            return new ArtistObject(in);
-        }
-
-        public ArtistObject[] newArray(int size) {
-            return new ArtistObject[size];
-        }
-    };
 }
