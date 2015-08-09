@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -44,29 +45,54 @@ public class ArtistDetailsActivityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_artist_details, container, false);
         ButterKnife.inject(this, rootView);
        if (savedInstanceState == null || !savedInstanceState.containsKey("keyTracks")) {
-            FetchArtistTopTen fetchArtistTopTen = new FetchArtistTopTen();
-            fetchArtistTopTen.execute(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT));
-
+           Intent intent = getActivity().getIntent();
+           if (intent != null || intent.getData() != null) {
+               FetchArtistTopTen fetchArtistTopTen = new FetchArtistTopTen();
+               fetchArtistTopTen.execute(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT), getActivity().getIntent().getStringExtra("artist"));
+           }
         } else {
             artistTopTenObjectList = savedInstanceState.getParcelableArrayList("keyTracks");
         }
         artistTopTenArrayAdapter = new CustomArtistTopTenArrayAdapter(getActivity(), R.layout.list_item_topten, R.id.list_item_toptenAlbumImage, R.id.track_name_textview, R.id.album_name_textview, artistTopTenObjectList);
         lv.setAdapter(artistTopTenArrayAdapter);
-
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String trackId = artistTopTenArrayAdapter.getItem(position).getId();
+//                String albumName = artistTopTenArrayAdapter.getItem(position).getAlbumName();
+//                String trackName = artistTopTenArrayAdapter.getItem(position).getTrackName();
+//                String albumArtwork = artistTopTenArrayAdapter.getItem(position).getLargeImage();
+//                String artistName = artistTopTenArrayAdapter.getItem(position).getArtistName();
+                Intent intent = new Intent(getActivity(), PlayerActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, position);
+                intent.putExtra("songsList", artistTopTenObjectList);
+                startActivity(intent);
+                progressDialog = ProgressDialog.show(getActivity(), "Wait", "Searching.....");
+                Log.d(LOG_TAG,"Called new activity Intent");
+            }
+        });
 
         return rootView;
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+    }
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("keyTracks", artistTopTenObjectList);
     }
+
 
     private class FetchArtistTopTen extends AsyncTask<String, Void, List<ArtistTopTenObject>> {
 
@@ -90,11 +116,16 @@ public class ArtistDetailsActivityFragment extends Fragment {
                     int tracksCount = 0;
                     for (Track track : tracksList) {
                         if (tracksCount < 10) {
-                            String image = "";
+                            String image = "", largeImage = "";
                             if (track.album.images.size() > 0) {
                                 image = track.album.images.get(track.album.images.size() - 1).url;
+                                largeImage = track.album.images.get(0).url;
                             }
-                            artistTopTenObjectList.add(new ArtistTopTenObject(image, track.name, track.album.name));
+                           // , largeImage, track.duration_ms, track.
+                            Log.v(LOG_TAG, "Preview URL: "+ track.preview_url);
+                            Log.v(LOG_TAG, "Track Duration: "+ track.duration_ms);
+
+                            artistTopTenObjectList.add(new ArtistTopTenObject(image, track.name, track.album.name, track.id , largeImage, track.preview_url, params[1]));
                             tracksCount++;
                         } else {
                             break;
@@ -119,7 +150,7 @@ public class ArtistDetailsActivityFragment extends Fragment {
         protected void onPostExecute(List<ArtistTopTenObject> artistTopTenObjects) {
             artistTopTenArrayAdapter.clear();
             progressDialog.dismiss();
-            Log.d(LOG_TAG, "Artist Top Tracks count in onPoctExecute: " + artistTopTenObjects.size());
+//            Log.d(LOG_TAG, "Artist Top Tracks count in onPoctExecute: " + artistTopTenObjects.size());
             progressDialog.dismiss();
             if (artistTopTenObjects != null) {
                 if (artistTopTenObjects.size() > 0) {

@@ -17,18 +17,27 @@ public class ArtistTopTenObject implements Parcelable {
             return new ArtistTopTenObject[size];
         }
     };
-    String image, trackName, albumName;
+    String image, trackName, albumName, id, largeImage, previewUrl, artistName;
 
     public ArtistTopTenObject(Parcel in) {
         image = in.readString();
         trackName = in.readString();
         albumName = in.readString();
+        id = in.readString();
+        largeImage = in.readString();
+        previewUrl = in.readString();
+        artistName = in.readString();
+
     }
 
-    public ArtistTopTenObject(String image, String trackName, String albumName) {
+    public ArtistTopTenObject(String image, String trackName, String albumName, String id, String largeImage, String previewUrl, String artistName) {
         this.image = image;
         this.trackName = trackName;
         this.albumName = albumName;
+        this.id = id;
+        this.largeImage = largeImage;
+        this.previewUrl = previewUrl;
+        this.artistName = artistName;
     }
 
     public String getAlbumName() {
@@ -43,6 +52,20 @@ public class ArtistTopTenObject implements Parcelable {
         return trackName;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getLargeImage() {
+        return largeImage;
+    }
+
+    public String getPreviewUrl() {
+        return previewUrl;
+    }
+    public String getArtistName() {
+        return artistName;
+    }
     @Override
     public int describeContents() {
         return 0;
@@ -53,5 +76,10 @@ public class ArtistTopTenObject implements Parcelable {
         dest.writeString(image);
         dest.writeString(trackName);
         dest.writeString(albumName);
+        dest.writeString(id);
+        dest.writeString(largeImage);
+        dest.writeString(previewUrl);
+        dest.writeString(artistName);
+
     }
 }

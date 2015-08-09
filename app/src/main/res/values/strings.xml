@@ -8,4 +8,5 @@
     <string name="no_top_tracks_message">This artist does not have any top tracks !</string>
     <string name="no_network_message">Sorry, Count not connect to server</string>
     <string name="no_results_message">Sorry, Your search did not yield any results !</string>
+    <string name="title_activity_player">Spotify Streamer</string>
 </resources>
