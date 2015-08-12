@@ -18,22 +18,22 @@ public class SpotifyDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String SQL_CREATE_ARTISTS_TABLE = "CREATE TABLE " + ArtistContract.ArtistsEntry.TABLE_NAME + "(" +
-                ArtistContract.ArtistsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ArtistContract.ArtistsEntry.COLUMN_ARTIST_ID + " INTEGER NOT NULL, " +
-                ArtistContract.ArtistsEntry.COLUMN_ARTIST_NAME + " TEXT NOT NULL, " +
-                ArtistContract.ArtistsEntry.COLUMN_ARTIST_IMAGE + " TEXT);";
+        final String SQL_CREATE_ARTISTS_TABLE = "CREATE TABLE " + SpotifyContract.ArtistsEntry.TABLE_NAME + "(" +
+                SpotifyContract.ArtistsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID + " INTEGER UNIQUE NOT NULL , " +
+                SpotifyContract.ArtistsEntry.COLUMN_ARTIST_NAME + " TEXT NOT NULL, " +
+                SpotifyContract.ArtistsEntry.COLUMN_ARTIST_IMAGE + " TEXT);";
 
-        final String SQL_CREATE_TOPTRACKS_TABLE = "CREATE TABLE " + ArtistContract.TopTracksEntry.TABLE_NAME + "(" +
-                ArtistContract.TopTracksEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ArtistContract.TopTracksEntry.COLUMN_ARTISTS_ID_KEY + " INTEGER NOT NULL, " +
-                ArtistContract.TopTracksEntry.COLUMN_ALBUM_NAME + " TEXT NOT NULL, " +
-                ArtistContract.TopTracksEntry.COLUMN_TRACK_NAME + " TEXT NOT NULL, " +
-                ArtistContract.TopTracksEntry.COLUMN_SMALL_ALBUM_IMAGE + " TEXT, " +
-                ArtistContract.TopTracksEntry.COLUMN_LARGE_ALBUM_IMAGE + " TEXT, " +
-                ArtistContract.TopTracksEntry.COLUMN_TRACK_PREVIEW_URL + " TEXT, " +
-                " FOREIGN KEY (" + ArtistContract.TopTracksEntry.COLUMN_ARTISTS_ID_KEY + ") REFERENCES " +
-                ArtistContract.ArtistsEntry.TABLE_NAME + " (" + ArtistContract.ArtistsEntry._ID + "));";
+        final String SQL_CREATE_TOPTRACKS_TABLE = "CREATE TABLE " + SpotifyContract.TopTracksEntry.TABLE_NAME + "(" +
+                SpotifyContract.TopTracksEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                SpotifyContract.TopTracksEntry.COLUMN_ARTISTS_ID_KEY + " INTEGER NOT NULL, " +
+                SpotifyContract.TopTracksEntry.COLUMN_ALBUM_NAME + " TEXT NOT NULL, " +
+                SpotifyContract.TopTracksEntry.COLUMN_TRACK_NAME + " TEXT NOT NULL, " +
+                SpotifyContract.TopTracksEntry.COLUMN_SMALL_ALBUM_IMAGE + " TEXT, " +
+                SpotifyContract.TopTracksEntry.COLUMN_LARGE_ALBUM_IMAGE + " TEXT, " +
+                SpotifyContract.TopTracksEntry.COLUMN_TRACK_PREVIEW_URL + " TEXT NOT NULL, " +
+                " FOREIGN KEY (" + SpotifyContract.TopTracksEntry.COLUMN_ARTISTS_ID_KEY + ") REFERENCES " +
+                SpotifyContract.ArtistsEntry.TABLE_NAME + " (" + SpotifyContract.ArtistsEntry._ID + "));";
 
         db.execSQL(SQL_CREATE_ARTISTS_TABLE);
         db.execSQL(SQL_CREATE_TOPTRACKS_TABLE);
@@ -41,8 +41,8 @@ public class SpotifyDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + ArtistContract.ArtistsEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + ArtistContract.TopTracksEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SpotifyContract.ArtistsEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SpotifyContract.TopTracksEntry.TABLE_NAME);
         onCreate(db);
     }
 }

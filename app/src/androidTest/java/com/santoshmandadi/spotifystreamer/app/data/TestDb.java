@@ -15,7 +15,6 @@
  */
 package com.santoshmandadi.spotifystreamer.app.data;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
@@ -53,8 +52,8 @@ public class TestDb extends AndroidTestCase {
         // Note that there will be another table in the DB that stores the
         // Android metadata (db version information)
         final HashSet<String> tableNameHashSet = new HashSet<String>();
-        tableNameHashSet.add(ArtistContract.ArtistsEntry.TABLE_NAME);
-        tableNameHashSet.add(ArtistContract.TopTracksEntry.TABLE_NAME);
+        tableNameHashSet.add(SpotifyContract.ArtistsEntry.TABLE_NAME);
+        tableNameHashSet.add(SpotifyContract.TopTracksEntry.TABLE_NAME);
 
         mContext.deleteDatabase(SpotifyDbHelper.DATABASE_NAME);
         SQLiteDatabase db = new SpotifyDbHelper(
@@ -78,7 +77,7 @@ public class TestDb extends AndroidTestCase {
                 tableNameHashSet.isEmpty());
 
         // now, do our tables contain the correct columns?
-        c = db.rawQuery("PRAGMA table_info(" + ArtistContract.ArtistsEntry.TABLE_NAME + ")",
+        c = db.rawQuery("PRAGMA table_info(" + SpotifyContract.ArtistsEntry.TABLE_NAME + ")",
                 null);
 
         assertTrue("Error: This means that we were unable to query the database for table information.",
@@ -86,10 +85,10 @@ public class TestDb extends AndroidTestCase {
 
         // Build a HashSet of all of the column names we want to look for
         final HashSet<String> artistsColumnHashSet = new HashSet<String>();
-        artistsColumnHashSet.add(ArtistContract.ArtistsEntry._ID);
-        artistsColumnHashSet.add(ArtistContract.ArtistsEntry.COLUMN_ARTIST_ID);
-        artistsColumnHashSet.add(ArtistContract.ArtistsEntry.COLUMN_ARTIST_NAME);
-        artistsColumnHashSet.add(ArtistContract.ArtistsEntry.COLUMN_ARTIST_IMAGE);
+        artistsColumnHashSet.add(SpotifyContract.ArtistsEntry._ID);
+        artistsColumnHashSet.add(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID);
+        artistsColumnHashSet.add(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_NAME);
+        artistsColumnHashSet.add(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_IMAGE);
 
         int columnNameIndex = c.getColumnIndex("name");
         do {

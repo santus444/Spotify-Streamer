@@ -1,6 +1,7 @@
 package com.santoshmandadi.spotifystreamer.app;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,9 @@ public class CustomArtistArrayAdapter extends ArrayAdapter<ArtistObject> {
             holder = (MyViewHolder) row.getTag();
         }
         holder.artistNameTextView.setText(listOfArtistObjects.get(position).getName());
-        if (listOfArtistObjects.get(position).getImage() != "")
+        Log.v("CURSOR ADAPTER Image for " + listOfArtistObjects.get(position).getName() + " : ", listOfArtistObjects.get(position).getImage());
+        String value = listOfArtistObjects.get(position).getImage();
+        if (!listOfArtistObjects.get(position).getImage().equalsIgnoreCase(""))
             Picasso.with(context).load(listOfArtistObjects.get(position).getImage()).into(holder.albumImageView);
         else
             holder.albumImageView.setImageResource(R.mipmap.ic_launcher);

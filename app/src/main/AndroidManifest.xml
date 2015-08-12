@@ -37,6 +37,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.santoshmandadi.spotifystreamer.app.ArtistDetailsActivity" />
         </activity>
+        <provider
+            android:authorities="com.santoshmandadi.spotifystreamer.app"
+            android:name=".data.SpotifyProvider"/>
     </application>
 
 </manifest>
