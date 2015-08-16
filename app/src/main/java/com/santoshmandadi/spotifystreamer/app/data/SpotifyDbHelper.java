@@ -20,20 +20,20 @@ public class SpotifyDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         final String SQL_CREATE_ARTISTS_TABLE = "CREATE TABLE " + SpotifyContract.ArtistsEntry.TABLE_NAME + "(" +
                 SpotifyContract.ArtistsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID + " INTEGER UNIQUE NOT NULL , " +
+                SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID + " TEXT UNIQUE NOT NULL , " +
                 SpotifyContract.ArtistsEntry.COLUMN_ARTIST_NAME + " TEXT NOT NULL, " +
                 SpotifyContract.ArtistsEntry.COLUMN_ARTIST_IMAGE + " TEXT);";
 
         final String SQL_CREATE_TOPTRACKS_TABLE = "CREATE TABLE " + SpotifyContract.TopTracksEntry.TABLE_NAME + "(" +
                 SpotifyContract.TopTracksEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                SpotifyContract.TopTracksEntry.COLUMN_ARTISTS_ID_KEY + " INTEGER NOT NULL, " +
+                SpotifyContract.TopTracksEntry.COLUMN_ARTIST_ID + " TEXT NOT NULL, " +
                 SpotifyContract.TopTracksEntry.COLUMN_ALBUM_NAME + " TEXT NOT NULL, " +
                 SpotifyContract.TopTracksEntry.COLUMN_TRACK_NAME + " TEXT NOT NULL, " +
                 SpotifyContract.TopTracksEntry.COLUMN_SMALL_ALBUM_IMAGE + " TEXT, " +
                 SpotifyContract.TopTracksEntry.COLUMN_LARGE_ALBUM_IMAGE + " TEXT, " +
                 SpotifyContract.TopTracksEntry.COLUMN_TRACK_PREVIEW_URL + " TEXT NOT NULL, " +
-                " FOREIGN KEY (" + SpotifyContract.TopTracksEntry.COLUMN_ARTISTS_ID_KEY + ") REFERENCES " +
-                SpotifyContract.ArtistsEntry.TABLE_NAME + " (" + SpotifyContract.ArtistsEntry._ID + "));";
+                " FOREIGN KEY (" + SpotifyContract.TopTracksEntry.COLUMN_ARTIST_ID + ") REFERENCES " +
+                SpotifyContract.ArtistsEntry.TABLE_NAME + " (" + SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID + "));";
 
         db.execSQL(SQL_CREATE_ARTISTS_TABLE);
         db.execSQL(SQL_CREATE_TOPTRACKS_TABLE);

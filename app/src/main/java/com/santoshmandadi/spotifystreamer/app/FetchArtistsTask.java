@@ -15,31 +15,18 @@
  */
 package com.santoshmandadi.spotifystreamer.app;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.text.format.Time;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.santoshmandadi.spotifystreamer.app.data.SpotifyContract;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -58,6 +45,7 @@ public class FetchArtistsTask extends AsyncTask<String, Void, Void> {
 
     private final Context mContext;
     private ProgressDialog progressDialog;
+    private boolean noResults = false, noNetwork = false;
     //CustomArtistArrayAdapter mSearchResultsAdapter;
 
     public FetchArtistsTask(Context context) {
@@ -113,6 +101,11 @@ public class FetchArtistsTask extends AsyncTask<String, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         progressDialog.dismiss();
+        if(noResults)
+            Toast.makeText(mContext, R.string.no_results_message, Toast.LENGTH_SHORT).show();
+        if(noNetwork)
+            Toast.makeText(mContext, R.string.no_network_message, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -131,7 +124,7 @@ public class FetchArtistsTask extends AsyncTask<String, Void, Void> {
         try {
            // if(new Util().isNetworkAvailable(MainActivity.this)) {
 
-                ArtistsPager artistsSearchResults = spotifyService.searchArtists(params[0]);
+                ArtistsPager artistsSearchResults = spotifyService.searchArtists(artistQuery);
 
                 Pager<Artist> artists = artistsSearchResults.artists;
                 int count = 0;
@@ -150,7 +143,6 @@ public class FetchArtistsTask extends AsyncTask<String, Void, Void> {
                     artistsList.add(count, new ArtistObject(artist.name, image, artist.id));
                     count++;
                 ContentValues weatherValues = new ContentValues();
-
                 weatherValues.put(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID, artist.id);
                 weatherValues.put(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_NAME, artist.name);
                 weatherValues.put(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_IMAGE, image);
@@ -163,12 +155,12 @@ public class FetchArtistsTask extends AsyncTask<String, Void, Void> {
             deletedInTopTracks = mContext.getContentResolver().delete(SpotifyContract.TopTracksEntry.CONTENT_URI, null,null);
 
             // add to database
-            if ( cVVector.size() > 0 ) {
+            if ( cVVector.size() > 0 )
                 // Student: call bulkInsert to add the weatherEntries to the database here
                 inserted = mContext.getContentResolver().bulkInsert(SpotifyContract.ArtistsEntry.CONTENT_URI,cVVector.toArray(new ContentValues[cVVector.size()]));
-            }
-
-            Log.d(LOG_TAG, "FetchArtistsTask Complete. " + deletedInArtists + " Deleted in artists");
+            else
+                noResults = true;
+                Log.d(LOG_TAG, "FetchArtistsTask Complete. " + deletedInArtists + " Deleted in artists");
             Log.d(LOG_TAG, "FetchArtistsTask Complete. " + deletedInTopTracks + " Deleted in top tracksFe");
             Log.d(LOG_TAG, "FetchArtistsTask Complete. " + inserted + " Inserted");
 
@@ -196,6 +188,7 @@ public class FetchArtistsTask extends AsyncTask<String, Void, Void> {
         } catch (RetrofitError error) {
             SpotifyError spotifyError = SpotifyError.fromRetrofitError(error);
             Log.e(LOG_TAG, "RetrofitError: " + spotifyError.getErrorDetails() + error.getKind());
+            noNetwork = true;
             return null;
         }
 

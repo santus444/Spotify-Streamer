@@ -17,10 +17,14 @@ public class SpotifyContract {
 
     public static final String PATH_TOPTRACKS = "toptracks";
 
+    public static final String PATH_TRACK = "track";
+
     public static final class TopTracksEntry implements BaseColumns{
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_TOPTRACKS).build();
+        public static final Uri TRACK_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_TOPTRACKS).appendPath(PATH_TRACK).build();
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TOPTRACKS;
@@ -29,7 +33,7 @@ public class SpotifyContract {
 
         public static final String TABLE_NAME = "toptracks";
 
-        public static final String COLUMN_ARTISTS_ID_KEY = "artists_id";
+        public static final String COLUMN_ARTIST_ID = "artist_id";
 
         public static final String COLUMN_ALBUM_NAME = "album_name";
 
@@ -44,11 +48,19 @@ public class SpotifyContract {
         public static Uri buildTopTracksUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-
+        public static Uri buildTopTracksUriWithArtistId(String id){
+            return CONTENT_URI.buildUpon().appendPath(id).build();
+        }
+        public static Uri buildTrackUriWithRowId(long id){
+            return ContentUris.withAppendedId(TRACK_URI, id);
+        }
         public static String getArtistIdFromUri(Uri uri){
             return uri.getPathSegments().get(1);
         }
 
+        public static String getTrackIdFromUri(Uri uri){
+            return uri.getPathSegments().get(2);
+        }
 
     }
 

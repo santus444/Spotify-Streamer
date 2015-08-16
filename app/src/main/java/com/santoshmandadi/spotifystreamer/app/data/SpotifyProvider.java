@@ -7,17 +7,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Created by santosh on 8/9/15.
  */
 public class SpotifyProvider extends ContentProvider {
+    private static final String LOG_TAG = SpotifyProvider.class.getSimpleName();
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private SpotifyDbHelper mOpenHelper;
 
     static final int ARTISTS = 100;
     static final int TOP_TRACKS = 300;
     static final int TOP_TRACKS_WITH_ID = 301;
+    static final int TRACK_WITH_ID = 302;
 
     private static final SQLiteQueryBuilder sTopResultsQueryBuilder;
 
@@ -30,15 +33,18 @@ public class SpotifyProvider extends ContentProvider {
                 SpotifyContract.TopTracksEntry.TABLE_NAME + " INNER JOIN " +
                         SpotifyContract.ArtistsEntry.TABLE_NAME +
                         " ON " + SpotifyContract.TopTracksEntry.TABLE_NAME +
-                        "." + SpotifyContract.TopTracksEntry.COLUMN_ARTISTS_ID_KEY +
+                        "." + SpotifyContract.TopTracksEntry.COLUMN_ARTIST_ID +
                         " = " + SpotifyContract.ArtistsEntry.TABLE_NAME +
-                        "." + SpotifyContract.ArtistsEntry._ID);
+                        "." + SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID);
     }
 
     private static final String sArtistSelection =
             SpotifyContract.ArtistsEntry.TABLE_NAME+
                     "." + SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID + " = ? ";
 
+    private static final String sTrackSelection =
+            SpotifyContract.TopTracksEntry.TABLE_NAME+
+                    "." + SpotifyContract.TopTracksEntry._ID + " = ? ";
     @Override
     public boolean onCreate() {
         mOpenHelper = new SpotifyDbHelper(getContext());
@@ -61,6 +67,11 @@ public class SpotifyProvider extends ContentProvider {
                 String artistId = SpotifyContract.TopTracksEntry.getArtistIdFromUri(uri);
                 cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,sArtistSelection,new String[]{artistId},null,null, sortOrder);
                 break;
+            case  TRACK_WITH_ID:
+                String trackRowIdFromUri = SpotifyContract.TopTracksEntry.getTrackIdFromUri(uri);
+                Log.v(LOG_TAG,"Track ID from URI: " + trackRowIdFromUri);
+                cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,sTrackSelection,new String[]{trackRowIdFromUri},null,null, sortOrder);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
         }
@@ -78,6 +89,8 @@ public class SpotifyProvider extends ContentProvider {
             case TOP_TRACKS:
                 return SpotifyContract.TopTracksEntry.CONTENT_TYPE;
             case TOP_TRACKS_WITH_ID:
+                return SpotifyContract.TopTracksEntry.CONTENT_TYPE;
+            case TRACK_WITH_ID:
                 return SpotifyContract.TopTracksEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
@@ -205,6 +218,7 @@ public class SpotifyProvider extends ContentProvider {
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
+        db.close();
             return returnCount;
     }
     private static UriMatcher buildUriMatcher() {
@@ -213,7 +227,8 @@ public class SpotifyProvider extends ContentProvider {
         // 2) Use the addURI function to match each of the types.  Use the constants from
         // WeatherContract to help define the types to the UriMatcher.
         sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_ARTISTS, ARTISTS);
-        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/#", TOP_TRACKS_WITH_ID);
+        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/*", TOP_TRACKS_WITH_ID);
+        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/" + SpotifyContract.PATH_TRACK + "/#", TRACK_WITH_ID);
         sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS, TOP_TRACKS);
 
         // 3) Return the new matcher!

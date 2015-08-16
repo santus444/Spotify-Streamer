@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.santoshmandadi.spotifystreamer.app.data.SpotifyContract;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -40,12 +39,12 @@ public class ArtistsAdapter extends CursorAdapter {
         // our view is pretty simple here --- just a text view
         // we'll keep the UI functional with a simple (and slow!) binding.
         MainActivityViewHolder mainActivityViewHolder = (MainActivityViewHolder) view.getTag();
-        String artistImageUrl = cursor.getString(cursor.getColumnIndex(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_IMAGE));
+        String artistImageUrl = cursor.getString(MainActivityFragment.COL_ARTIST_IMAGE);
         if(!artistImageUrl.equalsIgnoreCase(""))
             Picasso.with(context).load(artistImageUrl).into(mainActivityViewHolder.iconView);
         else
             mainActivityViewHolder.iconView.setImageResource(R.mipmap.ic_launcher);
-        String artistName = cursor.getString(cursor.getColumnIndex(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_NAME));
+        String artistName = cursor.getString(MainActivityFragment.COL_ARTIST_NAME);
         mainActivityViewHolder.artistName.setText(artistName);
 
 

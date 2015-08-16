@@ -14,7 +14,8 @@ public class ArtistDetailsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportFragmentManager().beginTransaction()
+        if(savedInstanceState==null)
+            getSupportFragmentManager().beginTransaction()
                 .add(R.id.artist_detail_container,new ArtistDetailsActivityFragment())
                 .commit();
 
