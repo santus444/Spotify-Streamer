@@ -64,13 +64,13 @@ public class SpotifyProvider extends ContentProvider {
                 cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case  TOP_TRACKS_WITH_ID:
-                String artistId = SpotifyContract.TopTracksEntry.getArtistIdFromUri(uri);
+                String artistId = SpotifyContract.TopTracksEntry.getArtistIdFromTopTracksUri(uri);
                 cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,sArtistSelection,new String[]{artistId},null,null, sortOrder);
                 break;
             case  TRACK_WITH_ID:
-                String trackRowIdFromUri = SpotifyContract.TopTracksEntry.getTrackIdFromUri(uri);
-                Log.v(LOG_TAG,"Track ID from URI: " + trackRowIdFromUri);
-                cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,sTrackSelection,new String[]{trackRowIdFromUri},null,null, sortOrder);
+                String trackRowIdFromUri = SpotifyContract.TopTracksEntry.getArtistIdFromTrackUri(uri);
+                Log.v(LOG_TAG,"Artist ID from URI: " + trackRowIdFromUri);
+                cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,sArtistSelection,new String[]{trackRowIdFromUri},null,null, sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
@@ -91,7 +91,7 @@ public class SpotifyProvider extends ContentProvider {
             case TOP_TRACKS_WITH_ID:
                 return SpotifyContract.TopTracksEntry.CONTENT_TYPE;
             case TRACK_WITH_ID:
-                return SpotifyContract.TopTracksEntry.CONTENT_ITEM_TYPE;
+                return SpotifyContract.TopTracksEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
         }
@@ -228,7 +228,7 @@ public class SpotifyProvider extends ContentProvider {
         // WeatherContract to help define the types to the UriMatcher.
         sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_ARTISTS, ARTISTS);
         sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/*", TOP_TRACKS_WITH_ID);
-        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/" + SpotifyContract.PATH_TRACK + "/#", TRACK_WITH_ID);
+        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/*/#", TRACK_WITH_ID);
         sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS, TOP_TRACKS);
 
         // 3) Return the new matcher!

@@ -3,6 +3,7 @@ package com.santoshmandadi.spotifystreamer.app;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -73,11 +74,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
-
-                    Intent intent = new Intent(getActivity(), ArtistDetailsActivity.class).setData(SpotifyContract.TopTracksEntry.buildTopTracksUriWithArtistId(cursor.getString(cursor.getColumnIndex(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID))));
-                    startActivity(intent);
-                    progressDialog = ProgressDialog.show(getActivity(), "Wait", "Searching.....");
-                    Log.d(LOG_TAG, "Called new activity Intent");
+                    FetchArtistTopTenTask fetchArtistTopTenTask = new FetchArtistTopTenTask(getActivity());
+                    fetchArtistTopTenTask.execute(cursor.getString(cursor.getColumnIndex(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID)));
+                            ((Callback) getActivity())
+                            .onItemSelected(SpotifyContract.TopTracksEntry.buildTopTracksUriWithArtistId(
+                                    cursor.getString(cursor.getColumnIndex(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID))
+                            ));
+//                    startActivity(intent);
+                   // progressDialog = ProgressDialog.show(getActivity(), "Wait", "Searching.....");
+                    Log.d(LOG_TAG, "Called new activity Intent : ");
                 }
 
 
@@ -140,5 +145,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         searchResultsAdapter.swapCursor(null);
+    }
+    public interface Callback {
+        /**
+         * ArtistDetailsActivityFragmentCallBack  for when an item has been selected.
+         */
+        public void onItemSelected(Uri contentUri);
     }
 }

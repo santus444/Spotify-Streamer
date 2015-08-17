@@ -51,17 +51,22 @@ public class SpotifyContract {
         public static Uri buildTopTracksUriWithArtistId(String id){
             return CONTENT_URI.buildUpon().appendPath(id).build();
         }
+        public static Uri buildTrackUriWithArtistIdAndPosition(String id, int position){
+            return ContentUris.withAppendedId(CONTENT_URI.buildUpon().appendPath(id).build(), position);
+        }
         public static Uri buildTrackUriWithRowId(long id){
             return ContentUris.withAppendedId(TRACK_URI, id);
         }
-        public static String getArtistIdFromUri(Uri uri){
+        public static String getArtistIdFromTopTracksUri(Uri uri){
             return uri.getPathSegments().get(1);
         }
 
-        public static String getTrackIdFromUri(Uri uri){
-            return uri.getPathSegments().get(2);
+        public static String getArtistIdFromTrackUri(Uri uri){
+            return uri.getPathSegments().get(1);
         }
-
+        public static int getPositionFromTrackUri(Uri uri){
+            return Integer.parseInt(uri.getPathSegments().get(2));
+        }
     }
 
     public static final class ArtistsEntry implements BaseColumns{

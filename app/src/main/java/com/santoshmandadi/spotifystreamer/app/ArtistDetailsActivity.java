@@ -1,5 +1,7 @@
 package com.santoshmandadi.spotifystreamer.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -7,17 +9,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class ArtistDetailsActivity extends ActionBarActivity {
+public class ArtistDetailsActivity extends ActionBarActivity implements ArtistDetailsActivityFragment.DetailsCallback{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if(savedInstanceState==null)
+        if(savedInstanceState==null) {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(ArtistDetailsActivityFragment.DETAIL_URI, getIntent().getData());
+            ArtistDetailsActivityFragment fragment = new ArtistDetailsActivityFragment();
+            fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                .add(R.id.artist_detail_container,new ArtistDetailsActivityFragment())
-                .commit();
+                    .add(R.id.artist_detail_container, fragment)
+                    .commit();
+        }
 
     }
 
@@ -51,5 +58,12 @@ public class ArtistDetailsActivity extends ActionBarActivity {
 
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void onTrackItemSelected(Uri trackUri) {
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.setData(trackUri);
+        startActivity(intent);
     }
 }
