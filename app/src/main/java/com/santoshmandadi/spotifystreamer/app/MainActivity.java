@@ -11,10 +11,11 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends ActionBarActivity implements MainActivityFragment.Callback, ArtistDetailsActivityFragment.DetailsCallback{
-    boolean mTwoPane;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private static final String DIALOGPLAYER_TAG = "DPLAYERTAG";
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    boolean mTwoPane;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +84,8 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
 
         Log.v(LOG_TAG, "Called the "+LOG_TAG+" DialogFragment Loader");
         Bundle args = new Bundle();
-        args.putParcelable(PlayerActivityFragment.TRACK_URI, contentUri);
-        PlayerActivityFragment playerActivityFragment = new PlayerActivityFragment();
+        args.putParcelable(SpotifyPlayerActivityFragment.TRACK_URI, contentUri);
+        SpotifyPlayerActivityFragment playerActivityFragment = new SpotifyPlayerActivityFragment();
         playerActivityFragment.setArguments(args);
 
         playerActivityFragment.show(getSupportFragmentManager(), DIALOGPLAYER_TAG);

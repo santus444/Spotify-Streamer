@@ -62,7 +62,7 @@ public class ArtistDetailsActivity extends ActionBarActivity implements ArtistDe
 
     @Override
     public void onTrackItemSelected(Uri trackUri) {
-        Intent intent = new Intent(this, PlayerActivity.class);
+        Intent intent = new Intent(this, SpotifyPlayerActivity.class);
         intent.setData(trackUri);
         startActivity(intent);
     }

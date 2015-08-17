@@ -43,17 +43,15 @@ public class ArtistDetailsActivityFragment extends Fragment implements LoaderMan
     public static final int COL_SMALL_ALBUM_IMAGE = 4;
     public static final int COL_TRACK_NAME = 5;
     public static final int COL_TRACK_PREVIEW_URL = 6;
-
+    static final String DETAIL_URI = "URI";
     private static final int TOP_TEN_LOADER = 1;
     public String LOG_TAG = ArtistDetailsActivity.class.getSimpleName();
     @InjectView(R.id.listview_topten)
     ListView lv;
     ProgressDialog progressDialog;
     ArrayList<ArtistTopTenObject> artistTopTenObjectList = new ArrayList<>();
-    private TopTenAdapter artistTopTenAdapter;
     Uri mUri;
-
-    static final String DETAIL_URI = "URI";
+    private TopTenAdapter artistTopTenAdapter;
 
     public ArtistDetailsActivityFragment() {
     }
@@ -114,7 +112,7 @@ public class ArtistDetailsActivityFragment extends Fragment implements LoaderMan
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
 
-//                    Intent intent = new Intent(getActivity(), PlayerActivity.class)
+//                    Intent intent = new Intent(getActivity(), SpotifyPlayerActivity.class)
 //                            .setData(SpotifyContract.TopTracksEntry.buildTopTracksUriWithArtistId(
                     ((DetailsCallback) getActivity())
                             .onTrackItemSelected(SpotifyContract.TopTracksEntry.buildTrackUriWithArtistIdAndPosition(

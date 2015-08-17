@@ -29,7 +29,7 @@
                 android:value="com.santoshmandadi.spotifystreamer.app.MainActivity" />
         </activity>
         <activity
-            android:name=".PlayerActivity"
+            android:name=".SpotifyPlayerActivity"
             android:label="@string/title_activity_player"
             android:parentActivityName=".MainActivity" >
             <!--http://developer.android.com/design/patterns/navigation.html-->
@@ -38,8 +38,8 @@
                 android:value="com.santoshmandadi.spotifystreamer.app.ArtistDetailsActivity" />
         </activity>
         <provider
-            android:authorities="com.santoshmandadi.spotifystreamer.app"
-            android:name=".data.SpotifyProvider"/>
+            android:name=".data.SpotifyProvider"
+            android:authorities="com.santoshmandadi.spotifystreamer.app" />
     </application>
 
 </manifest>
