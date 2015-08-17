@@ -111,16 +111,10 @@ public class ArtistDetailsActivityFragment extends Fragment implements LoaderMan
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
-
-//                    Intent intent = new Intent(getActivity(), SpotifyPlayerActivity.class)
-//                            .setData(SpotifyContract.TopTracksEntry.buildTopTracksUriWithArtistId(
                     ((DetailsCallback) getActivity())
                             .onTrackItemSelected(SpotifyContract.TopTracksEntry.buildTrackUriWithArtistIdAndPosition(
                                     cursor.getString(COL_ARTIST_ID), position
                             ));
-//                    intent.putExtra(Intent.EXTRA_TEXT, position);
-//                    startActivity(intent);
-                   // progressDialog = ProgressDialog.show(getActivity(), "Wait", "Searching.....");
                     Log.d(LOG_TAG, "Called new activity Intent");
                 }
 
@@ -148,19 +142,10 @@ public class ArtistDetailsActivityFragment extends Fragment implements LoaderMan
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//        Intent intent = getActivity().getIntent();
-//        if (intent == null || intent.getData() == null) {
-//            return null;
-//        } else if (intent != null || intent.getData() != null) {
-//            FetchArtistTopTenTask fetchArtistTopTenTask = new FetchArtistTopTenTask(getActivity());
-//            //fetchArtistTopTenTask.execute(getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT), getActivity().getIntent().getStringExtra("artist"));
-//            fetchArtistTopTenTask.execute(SpotifyContract.TopTracksEntry.getArtistIdFromTopTracksUri(Uri.parse(getActivity().getIntent().getDataString())));
-//
-//        }
-        if(null != mUri) {
+
+        if (null != mUri) {
             String sortOrder = SpotifyContract.TopTracksEntry.TABLE_NAME + "." + SpotifyContract.TopTracksEntry._ID + " ASC";
-//            String selection = SpotifyContract.TopTracksEntry.TABLE_NAME + "." + SpotifyContract.TopTracksEntry.COLUMN_ARTIST_ID + " = ?";
-//            String artistId = SpotifyContract.TopTracksEntry.getArtistIdFromTopTracksUri(mUri);
+
             return new CursorLoader(getActivity(), mUri, TRACKS_COLUMNS, null, null, sortOrder);
         }
         return null;

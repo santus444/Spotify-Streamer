@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity implements MainActivityFragment.Callback, ArtistDetailsActivityFragment.DetailsCallback{
+public class MainActivity extends ActionBarActivity implements MainActivityFragment.Callback, ArtistDetailsActivityFragment.DetailsCallback {
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private static final String DIALOGPLAYER_TAG = "DPLAYERTAG";
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -20,19 +20,18 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(findViewById(R.id.artist_detail_container) != null){
+        if (findViewById(R.id.artist_detail_container) != null) {
             mTwoPane = true;
 
-            if(savedInstanceState == null){
+            if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.artist_detail_container, new ArtistDetailsActivityFragment(), DETAILFRAGMENT_TAG)
                         .commit();
             }
-        }else {
-                mTwoPane = false;
-            }
+        } else {
+            mTwoPane = false;
         }
-
+    }
 
 
     @Override
@@ -51,7 +50,7 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.home){
+        if (id == R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }
@@ -63,7 +62,7 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
     @Override
     public void onItemSelected(Uri contentUri) {
 
-        if(mTwoPane){
+        if (mTwoPane) {
             Bundle args = new Bundle();
             args.putParcelable(ArtistDetailsActivityFragment.DETAIL_URI, contentUri);
 
@@ -72,17 +71,17 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
 
             getSupportFragmentManager().beginTransaction().replace(R.id.artist_detail_container, fragment, DETAILFRAGMENT_TAG).commit();
 
-        }else {
+        } else {
             Intent intent = new Intent(this, ArtistDetailsActivity.class);
             intent.setData(contentUri);
             startActivity(intent);
-             }
+        }
     }
 
     @Override
     public void onTrackItemSelected(Uri contentUri) {
 
-        Log.v(LOG_TAG, "Called the "+LOG_TAG+" DialogFragment Loader");
+        Log.v(LOG_TAG, "Called the " + LOG_TAG + " DialogFragment Loader");
         Bundle args = new Bundle();
         args.putParcelable(SpotifyPlayerActivityFragment.TRACK_URI, contentUri);
         SpotifyPlayerActivityFragment playerActivityFragment = new SpotifyPlayerActivityFragment();

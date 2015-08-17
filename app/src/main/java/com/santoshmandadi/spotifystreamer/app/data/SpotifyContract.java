@@ -19,7 +19,7 @@ public class SpotifyContract {
 
     public static final String PATH_TRACK = "track";
 
-    public static final class TopTracksEntry implements BaseColumns{
+    public static final class TopTracksEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_TOPTRACKS).build();
@@ -45,37 +45,42 @@ public class SpotifyContract {
 
         public static final String COLUMN_TRACK_PREVIEW_URL = "preview_url";
 
-        public static Uri buildTopTracksUri(long id){
+        public static Uri buildTopTracksUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-        public static Uri buildTopTracksUriWithArtistId(String id){
+
+        public static Uri buildTopTracksUriWithArtistId(String id) {
             return CONTENT_URI.buildUpon().appendPath(id).build();
         }
-        public static Uri buildTrackUriWithArtistIdAndPosition(String id, int position){
+
+        public static Uri buildTrackUriWithArtistIdAndPosition(String id, int position) {
             return ContentUris.withAppendedId(CONTENT_URI.buildUpon().appendPath(id).build(), position);
         }
-        public static Uri buildTrackUriWithRowId(long id){
+
+        public static Uri buildTrackUriWithRowId(long id) {
             return ContentUris.withAppendedId(TRACK_URI, id);
         }
-        public static String getArtistIdFromTopTracksUri(Uri uri){
+
+        public static String getArtistIdFromTopTracksUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
 
-        public static String getArtistIdFromTrackUri(Uri uri){
+        public static String getArtistIdFromTrackUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
-        public static int getPositionFromTrackUri(Uri uri){
+
+        public static int getPositionFromTrackUri(Uri uri) {
             return Integer.parseInt(uri.getPathSegments().get(2));
         }
     }
 
-    public static final class ArtistsEntry implements BaseColumns{
+    public static final class ArtistsEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_ARTISTS).build();
 
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +PATH_ARTISTS;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ARTISTS;
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ARTISTS;
 
@@ -87,7 +92,7 @@ public class SpotifyContract {
 
         public static final String COLUMN_ARTIST_IMAGE = "artist_image";
 
-        public static Uri buildArtistsUri(long id){
+        public static Uri buildArtistsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 

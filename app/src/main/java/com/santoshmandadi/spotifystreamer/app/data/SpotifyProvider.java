@@ -13,18 +13,21 @@ import android.util.Log;
  * Created by santosh on 8/9/15.
  */
 public class SpotifyProvider extends ContentProvider {
-    private static final String LOG_TAG = SpotifyProvider.class.getSimpleName();
-    private static final UriMatcher sUriMatcher = buildUriMatcher();
-    private SpotifyDbHelper mOpenHelper;
-
     static final int ARTISTS = 100;
     static final int TOP_TRACKS = 300;
     static final int TOP_TRACKS_WITH_ID = 301;
     static final int TRACK_WITH_ID = 302;
-
+    private static final String LOG_TAG = SpotifyProvider.class.getSimpleName();
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
     private static final SQLiteQueryBuilder sTopResultsQueryBuilder;
+    private static final String sArtistSelection =
+            SpotifyContract.ArtistsEntry.TABLE_NAME +
+                    "." + SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID + " = ? ";
+    private static final String sTrackSelection =
+            SpotifyContract.TopTracksEntry.TABLE_NAME +
+                    "." + SpotifyContract.TopTracksEntry._ID + " = ? ";
 
-    static{
+    static {
         sTopResultsQueryBuilder = new SQLiteQueryBuilder();
 
         //This is an inner join which looks like
@@ -38,13 +41,22 @@ public class SpotifyProvider extends ContentProvider {
                         "." + SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID);
     }
 
-    private static final String sArtistSelection =
-            SpotifyContract.ArtistsEntry.TABLE_NAME+
-                    "." + SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID + " = ? ";
+    private SpotifyDbHelper mOpenHelper;
 
-    private static final String sTrackSelection =
-            SpotifyContract.TopTracksEntry.TABLE_NAME+
-                    "." + SpotifyContract.TopTracksEntry._ID + " = ? ";
+    private static UriMatcher buildUriMatcher() {
+        UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+        // 2) Use the addURI function to match each of the types.  Use the constants from
+        // WeatherContract to help define the types to the UriMatcher.
+        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_ARTISTS, ARTISTS);
+        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/*", TOP_TRACKS_WITH_ID);
+        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/*/#", TRACK_WITH_ID);
+        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS, TOP_TRACKS);
+
+        // 3) Return the new matcher!
+        return sURIMatcher;
+    }
+
     @Override
     public boolean onCreate() {
         mOpenHelper = new SpotifyDbHelper(getContext());
@@ -56,21 +68,21 @@ public class SpotifyProvider extends ContentProvider {
 
         Cursor cursor;
 
-        switch (sUriMatcher.match(uri)){
+        switch (sUriMatcher.match(uri)) {
             case ARTISTS:
                 cursor = mOpenHelper.getReadableDatabase().query(SpotifyContract.ArtistsEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case TOP_TRACKS:
                 cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
                 break;
-            case  TOP_TRACKS_WITH_ID:
+            case TOP_TRACKS_WITH_ID:
                 String artistId = SpotifyContract.TopTracksEntry.getArtistIdFromTopTracksUri(uri);
-                cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,sArtistSelection,new String[]{artistId},null,null, sortOrder);
+                cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, sArtistSelection, new String[]{artistId}, null, null, sortOrder);
                 break;
-            case  TRACK_WITH_ID:
+            case TRACK_WITH_ID:
                 String trackRowIdFromUri = SpotifyContract.TopTracksEntry.getArtistIdFromTrackUri(uri);
-                Log.v(LOG_TAG,"Artist ID from URI: " + trackRowIdFromUri);
-                cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,sArtistSelection,new String[]{trackRowIdFromUri},null,null, sortOrder);
+                Log.v(LOG_TAG, "Artist ID from URI: " + trackRowIdFromUri);
+                cursor = sTopResultsQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, sArtistSelection, new String[]{trackRowIdFromUri}, null, null, sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
@@ -83,7 +95,7 @@ public class SpotifyProvider extends ContentProvider {
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
 
-        switch (match){
+        switch (match) {
             case ARTISTS:
                 return SpotifyContract.ArtistsEntry.CONTENT_TYPE;
             case TOP_TRACKS:
@@ -104,20 +116,20 @@ public class SpotifyProvider extends ContentProvider {
         Uri returnUri;
 
         switch (match) {
-            case ARTISTS:{
-                long _id = db.insert(SpotifyContract.ArtistsEntry.TABLE_NAME,null, values);
-                if(_id > 0){
+            case ARTISTS: {
+                long _id = db.insert(SpotifyContract.ArtistsEntry.TABLE_NAME, null, values);
+                if (_id > 0) {
                     returnUri = SpotifyContract.ArtistsEntry.buildArtistsUri(_id);
-                }else
+                } else
                     throw new android.database.SQLException("Failed to insert into row into " + uri);
                 break;
             }
 
             case TOP_TRACKS: {
                 long _id = db.insert(SpotifyContract.TopTracksEntry.TABLE_NAME, null, values);
-                if (_id > 0){
+                if (_id > 0) {
                     returnUri = SpotifyContract.TopTracksEntry.buildTopTracksUri(_id);
-                }else
+                } else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
@@ -134,8 +146,8 @@ public class SpotifyProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         int rowsDeleted;
-        if (null==selection) selection = "1";
-        switch (sUriMatcher.match(uri)){
+        if (null == selection) selection = "1";
+        switch (sUriMatcher.match(uri)) {
             case TOP_TRACKS: {
                 rowsDeleted = db.delete(SpotifyContract.TopTracksEntry.TABLE_NAME, selection, selectionArgs);
                 break;
@@ -143,16 +155,18 @@ public class SpotifyProvider extends ContentProvider {
             case ARTISTS: {
                 rowsDeleted = db.delete(SpotifyContract.ArtistsEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-            }default:{
-                throw new UnsupportedOperationException(" Unknown uri: "+ uri);
+            }
+            default: {
+                throw new UnsupportedOperationException(" Unknown uri: " + uri);
             }
         }
 
-        if(rowsDeleted != 0)
+        if (rowsDeleted != 0)
             getContext().getContentResolver().notifyChange(uri, null);
 
         db.close();
-        return rowsDeleted;    }
+        return rowsDeleted;
+    }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
@@ -160,23 +174,25 @@ public class SpotifyProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int numberOfRowsImpacted = 0;
 
-        switch (sUriMatcher.match(uri)){
-            case TOP_TRACKS:{
+        switch (sUriMatcher.match(uri)) {
+            case TOP_TRACKS: {
                 numberOfRowsImpacted = db.update(SpotifyContract.TopTracksEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             }
-            case ARTISTS:{
-                numberOfRowsImpacted= db.update(SpotifyContract.ArtistsEntry.TABLE_NAME, values, selection, selectionArgs);
+            case ARTISTS: {
+                numberOfRowsImpacted = db.update(SpotifyContract.ArtistsEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
-            }default:{
-                throw new UnsupportedOperationException(" Unknown uri: "+ uri);
+            }
+            default: {
+                throw new UnsupportedOperationException(" Unknown uri: " + uri);
             }
         }
-        if(numberOfRowsImpacted != 0)
+        if (numberOfRowsImpacted != 0)
             getContext().getContentResolver().notifyChange(uri, null);
 
         db.close();
-        return numberOfRowsImpacted;    }
+        return numberOfRowsImpacted;
+    }
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
@@ -219,21 +235,8 @@ public class SpotifyProvider extends ContentProvider {
 
         getContext().getContentResolver().notifyChange(uri, null);
         db.close();
-            return returnCount;
+        return returnCount;
     }
-    private static UriMatcher buildUriMatcher() {
-        UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-        // 2) Use the addURI function to match each of the types.  Use the constants from
-        // WeatherContract to help define the types to the UriMatcher.
-        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_ARTISTS, ARTISTS);
-        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/*", TOP_TRACKS_WITH_ID);
-        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS + "/*/#", TRACK_WITH_ID);
-        sURIMatcher.addURI(SpotifyContract.CONTENT_AUTHORITY, SpotifyContract.PATH_TOPTRACKS, TOP_TRACKS);
-
-        // 3) Return the new matcher!
-        return sURIMatcher;    }
-
 
 
 }

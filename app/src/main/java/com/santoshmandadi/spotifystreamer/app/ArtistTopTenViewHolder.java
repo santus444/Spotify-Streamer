@@ -12,7 +12,7 @@ public class ArtistTopTenViewHolder {
     public final TextView trackName;
     public final TextView albumName;
 
-    public ArtistTopTenViewHolder(View view){
+    public ArtistTopTenViewHolder(View view) {
         iconView = (ImageView) view.findViewById(R.id.list_item_toptenAlbumImage);
         trackName = (TextView) view.findViewById(R.id.track_name_textview);
         albumName = (TextView) view.findViewById(R.id.album_name_textview);

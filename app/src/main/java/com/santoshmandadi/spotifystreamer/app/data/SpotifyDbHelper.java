@@ -8,9 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by santosh on 7/28/15.
  */
 public class SpotifyDbHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
-
     static final String DATABASE_NAME = "spotify.db";
+    private static final int DATABASE_VERSION = 1;
 
     public SpotifyDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

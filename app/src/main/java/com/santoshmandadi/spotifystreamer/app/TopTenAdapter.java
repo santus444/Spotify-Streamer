@@ -41,7 +41,7 @@ public class TopTenAdapter extends CursorAdapter {
         // we'll keep the UI functional with a simple (and slow!) binding.
         ArtistTopTenViewHolder artistTopTenViewHolder = (ArtistTopTenViewHolder) view.getTag();
         String albumImageUrl = cursor.getString(cursor.getColumnIndex(SpotifyContract.TopTracksEntry.COLUMN_SMALL_ALBUM_IMAGE));
-        if(!albumImageUrl.equalsIgnoreCase(""))
+        if (!albumImageUrl.equalsIgnoreCase(""))
             Picasso.with(context).load(albumImageUrl).into(artistTopTenViewHolder.iconView);
         else
             artistTopTenViewHolder.iconView.setImageResource(R.mipmap.ic_launcher);

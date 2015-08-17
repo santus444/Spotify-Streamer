@@ -1,7 +1,6 @@
 package com.santoshmandadi.spotifystreamer.app;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -66,7 +65,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             //keep bringing up the keyboard when they rotate screen
             this.setSearch();
         }
-        // searchResultsAdapter = new CustomArtistArrayAdapter(getActivity(), R.layout.list_item_results, R.id.list_item_artist_textview, R.id.list_item_artist_imageview, listOfArtistObjects);
         searchResultsAdapter = new ArtistsAdapter(getActivity(), null, 0);
         lv.setAdapter(searchResultsAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -76,12 +74,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 if (cursor != null) {
                     FetchArtistTopTenTask fetchArtistTopTenTask = new FetchArtistTopTenTask(getActivity());
                     fetchArtistTopTenTask.execute(cursor.getString(cursor.getColumnIndex(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID)));
-                            ((Callback) getActivity())
+                    ((Callback) getActivity())
                             .onItemSelected(SpotifyContract.TopTracksEntry.buildTopTracksUriWithArtistId(
                                     cursor.getString(cursor.getColumnIndex(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID))
                             ));
-//                    startActivity(intent);
-                   // progressDialog = ProgressDialog.show(getActivity(), "Wait", "Searching.....");
                     Log.d(LOG_TAG, "Called new activity Intent : ");
                 }
 
@@ -146,6 +142,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoaderReset(Loader<Cursor> loader) {
         searchResultsAdapter.swapCursor(null);
     }
+
     public interface Callback {
         /**
          * ArtistDetailsActivityFragmentCallBack  for when an item has been selected.

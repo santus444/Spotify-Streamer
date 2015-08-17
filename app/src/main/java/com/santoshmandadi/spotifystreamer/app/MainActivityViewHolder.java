@@ -11,7 +11,7 @@ public class MainActivityViewHolder {
     public final ImageView iconView;
     public final TextView artistName;
 
-    public MainActivityViewHolder(View view){
+    public MainActivityViewHolder(View view) {
         iconView = (ImageView) view.findViewById(R.id.list_item_artist_imageview);
         artistName = (TextView) view.findViewById(R.id.list_item_artist_textview);
 

@@ -79,10 +79,9 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
     Handler myHandler = new Handler();
     boolean play = true;
     int songIndex;
+    int seekTo = 0;
     ProgressDialog progressDialog;
     int finalDuration, startTime;
-    //ArtistTopTenObject artistTopTenObject;
-    //  ArrayList<ArtistTopTenObject> artistTopTenObjectList;
     Cursor mCursor;
     Uri mUri;
     private int PLAYER_LOADER = 2;
@@ -118,8 +117,9 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
         ButterKnife.inject(this, rootView);
         artistName.setText(getActivity().getIntent().getDataString());
         if (savedInstanceState != null) {
-            //artistTopTenObjectList = savedInstanceState.getParcelableArrayList("keyTracks");
             songIndex = savedInstanceState.getInt("songIndex");
+            play = savedInstanceState.getBoolean("isPlaying");
+            seekTo = savedInstanceState.getInt("position");
         }
         statusSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress;
@@ -127,9 +127,7 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Log.v("Seeking: ", String.valueOf(progress));
-//                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-//                    mediaPlayer.seekTo(30000 * (progress / 100));
-//                }
+
                 this.progress = progress;
             }
 
@@ -162,6 +160,7 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
             @Override
             public void onClick(View v) {
                 if (mCursor.moveToPrevious()) {
+                    seekTo = 0;
                     if (mediaPlayer != null)
                         mediaPlayer.stop();
                     mediaPlayer = null;
@@ -178,6 +177,7 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
             @Override
             public void onClick(View v) {
                 if (mCursor.moveToNext()) {
+                    seekTo = 0;
                     if (mediaPlayer != null)
                         mediaPlayer.stop();
                     updateUI();
@@ -257,6 +257,8 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
     @Override
     public void onPrepared(MediaPlayer mp) {
         progressDialog.dismiss();
+        if (seekTo != 0)
+            mp.seekTo(seekTo);
         finalDuration = mp.getDuration();
         int startTime = mp.getCurrentPosition();
 
@@ -290,7 +292,7 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
 
         outState.putInt("position", mediaPlayer.getCurrentPosition());
         mediaPlayer.pause();
-        // outState.putBoolean("isPlaying", );
+        outState.putBoolean("isPlaying", mediaPlayer.isPlaying());
         super.onSaveInstanceState(outState);
     }
 
@@ -334,7 +336,5 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
 
     @Override
     public void onSeekComplete(MediaPlayer mp) {
-//        if(mp!=null)
-//        currentDurationTextView.setText(mp.getCurrentPosition());
     }
 }

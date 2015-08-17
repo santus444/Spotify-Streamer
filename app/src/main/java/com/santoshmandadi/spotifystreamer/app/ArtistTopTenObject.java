@@ -63,9 +63,11 @@ public class ArtistTopTenObject implements Parcelable {
     public String getPreviewUrl() {
         return previewUrl;
     }
+
     public String getArtistName() {
         return artistName;
     }
+
     @Override
     public int describeContents() {
         return 0;

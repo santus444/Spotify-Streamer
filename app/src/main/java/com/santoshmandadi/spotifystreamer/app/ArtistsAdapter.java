@@ -36,11 +36,10 @@ public class ArtistsAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        // our view is pretty simple here --- just a text view
-        // we'll keep the UI functional with a simple (and slow!) binding.
+
         MainActivityViewHolder mainActivityViewHolder = (MainActivityViewHolder) view.getTag();
         String artistImageUrl = cursor.getString(MainActivityFragment.COL_ARTIST_IMAGE);
-        if(!artistImageUrl.equalsIgnoreCase(""))
+        if (!artistImageUrl.equalsIgnoreCase(""))
             Picasso.with(context).load(artistImageUrl).into(mainActivityViewHolder.iconView);
         else
             mainActivityViewHolder.iconView.setImageResource(R.mipmap.ic_launcher);

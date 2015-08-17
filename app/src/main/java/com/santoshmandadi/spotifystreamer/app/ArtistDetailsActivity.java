@@ -9,14 +9,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class ArtistDetailsActivity extends ActionBarActivity implements ArtistDetailsActivityFragment.DetailsCallback{
+public class ArtistDetailsActivity extends ActionBarActivity implements ArtistDetailsActivityFragment.DetailsCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if(savedInstanceState==null) {
+        if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(ArtistDetailsActivityFragment.DETAIL_URI, getIntent().getData());
             ArtistDetailsActivityFragment fragment = new ArtistDetailsActivityFragment();
@@ -47,7 +47,7 @@ public class ArtistDetailsActivity extends ActionBarActivity implements ArtistDe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.home){
+        if (id == R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }

@@ -45,13 +45,11 @@ public class FetchArtistTopTenTask extends AsyncTask<String, Void, Void> {
     private final Context mContext;
     private ProgressDialog progressDialog;
     private boolean noResults = false, noNetwork = false;
+    private boolean DEBUG = true;
 
     public FetchArtistTopTenTask(Context context) {
         mContext = context;
     }
-
-    private boolean DEBUG = true;
-
 
     @Override
     protected void onPreExecute() {
@@ -63,9 +61,9 @@ public class FetchArtistTopTenTask extends AsyncTask<String, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         progressDialog.dismiss();
-        if(noResults)
+        if (noResults)
             Toast.makeText(mContext, R.string.no_results_message, Toast.LENGTH_SHORT).show();
-        if(noNetwork)
+        if (noNetwork)
             Toast.makeText(mContext, R.string.no_network_message, Toast.LENGTH_SHORT).show();
 
     }
@@ -73,17 +71,16 @@ public class FetchArtistTopTenTask extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... params) {
 
-        // If there's no zip code, there's nothing to look up.  Verify size of params.
         if (params.length == 0) {
             return null;
         }
         String artistId = params[0];
-        String selection = SpotifyContract.TopTracksEntry.TABLE_NAME+
+        String selection = SpotifyContract.TopTracksEntry.TABLE_NAME +
                 "." + SpotifyContract.TopTracksEntry.COLUMN_ARTIST_ID + " = ? ";
         String sortOrder = SpotifyContract.TopTracksEntry.COLUMN_TRACK_NAME + " ASC";
 
-        Cursor cursor = mContext.getContentResolver().query(SpotifyContract.TopTracksEntry.CONTENT_URI, null,selection,new String[]{artistId},sortOrder);
-        if(!cursor.moveToFirst()) {
+        Cursor cursor = mContext.getContentResolver().query(SpotifyContract.TopTracksEntry.CONTENT_URI, null, selection, new String[]{artistId}, sortOrder);
+        if (!cursor.moveToFirst()) {
             SpotifyApi spotifyApi = new SpotifyApi();
             SpotifyService spotifyService = spotifyApi.getService();
             Map<String, Object> options = new HashMap<>();
@@ -106,7 +103,7 @@ public class FetchArtistTopTenTask extends AsyncTask<String, Void, Void> {
                         Log.v(LOG_TAG, "Preview URL: " + track.preview_url);
                         Log.v(LOG_TAG, "Track Duration: " + track.duration_ms);
 
-                    //    artistTopTenObjectList.add(new ArtistTopTenObject(image, track.name, track.album.name, track.id , largeImage, track.preview_url, params[1]));
+                        //    artistTopTenObjectList.add(new ArtistTopTenObject(image, track.name, track.album.name, track.id , largeImage, track.preview_url, params[1]));
                         tracksCount++;
                         ContentValues weatherValues = new ContentValues();
 
@@ -127,33 +124,15 @@ public class FetchArtistTopTenTask extends AsyncTask<String, Void, Void> {
                 int inserted = 0;
                 // add to database
                 if (cVVector.size() > 0)
-                    // Student: call bulkInsert to add the weatherEntries to the database here
                     inserted = mContext.getContentResolver().bulkInsert(SpotifyContract.TopTracksEntry.CONTENT_URI, cVVector.toArray(new ContentValues[cVVector.size()]));
                 else
                     noResults = true;
 
-//            String sortOrder = SpotifyContract.ArtistsEntry.COLUMN_ARTIST_NAME + " ASC";
-//            Uri artistsTableUri = SpotifyContract.ArtistsEntry.CONTENT_URI;
-//            Cursor cur = mContext.getContentResolver().query(artistsTableUri,
-//                    null, null, null, sortOrder);
-//
-//            cVVector = new Vector<ContentValues>(cur.getCount());
-//            if (cur.moveToFirst()) {
-//                do {
-//                    ContentValues cv = new ContentValues();
-//                    DatabaseUtils.cursorRowToContentValues(cur, cv);
-//                    cVVector.add(cv);
-//                } while (cur.moveToNext());
-//            }
 
-                if(inserted>0)
+                if (inserted > 0)
                     Log.d(LOG_TAG, "FetchArtistTopTenTask Complete. " + inserted + " Inserted");
 
 
-//            }else
-//            {
-//                return null;
-//            }
             } catch (RetrofitError error) {
                 SpotifyError spotifyError = SpotifyError.fromRetrofitError(error);
                 Log.e(LOG_TAG, "RetrofitError: " + spotifyError.getErrorDetails() + error.getKind());
@@ -162,43 +141,6 @@ public class FetchArtistTopTenTask extends AsyncTask<String, Void, Void> {
             }
         }
 
-        // This will only happen if there was an error getting or parsing the forecast.
         return null;
     }
-//    @Override
-//    protected void onPostExecute(List<ArtistObject> artistObjectList) {
-//        mSearchResultsAdapter.clear();
-//        progressDialog.dismiss();
-//        if (artistObjectList != null) {
-//            if (artistObjectList.size() > 0) {
-//                for (ArtistObject artist : artistObjectList) {
-//                    mSearchResultsAdapter.add(artist);
-//                }
-//            } else {
-//                Toast.makeText(mContext, R.string.no_results_message, Toast.LENGTH_SHORT).show();
-//            }
-//        } else {
-//            Toast.makeText(mContext, R.string.no_network_message, Toast.LENGTH_SHORT).show();
-//        }
-//    }
-//
-//    List<ArtistObject> convertContentValuesToListArrayOfArtistObjects(Vector<ContentValues> cvv) {
-//        // return strings to keep UI functional for now
-//        List<ArtistObject> resultStrs = new ArrayList<>(cvv.size());
-//        for ( int i = 0; i < cvv.size(); i++ ) {
-//            ContentValues artistDetails = cvv.elementAt(i);
-//            resultStrs.add(new ArtistObject(artistDetails.getAsString(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_NAME), artistDetails.getAsString(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_IMAGE),artistDetails.getAsString(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID)));
-//        }
-//        return resultStrs;
-//    }
-//    @Override
-//    protected void onPostExecute(String[] result) {
-//        if (result != null && mForecastAdapter != null) {
-//            mForecastAdapter.clear();
-//            for(String dayForecastStr : result) {
-//                mForecastAdapter.add(dayForecastStr);
-//            }
-//            // New data is back from the server.  Hooray!
-//        }
-//    }
 }
