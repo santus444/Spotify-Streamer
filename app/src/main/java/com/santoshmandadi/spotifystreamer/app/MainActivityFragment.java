@@ -43,6 +43,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @InjectView(R.id.listview_search)
     ListView lv;
     ProgressDialog progressDialog;
+    int selectedItemPosition;
     ArrayList<ArtistObject> listOfArtistObjects = new ArrayList<>();
 
     private ArtistsAdapter searchResultsAdapter;
@@ -61,6 +62,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             this.setSearch();
         } else {
             listOfArtistObjects = savedInstanceState.getParcelableArrayList("keyArtist");
+            selectedItemPosition = savedInstanceState.getInt("selectedItemPosition");
             //not setting iconifiedByDefault as false as it will be annoying if the user has not selected and we
             //keep bringing up the keyboard when they rotate screen
             this.setSearch();
@@ -72,6 +74,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
+                    selectedItemPosition = position;
                     FetchArtistTopTenTask fetchArtistTopTenTask = new FetchArtistTopTenTask(getActivity());
                     fetchArtistTopTenTask.execute(cursor.getString(cursor.getColumnIndex(SpotifyContract.ArtistsEntry.COLUMN_ARTIST_ID)));
                     ((Callback) getActivity())
@@ -91,6 +94,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("keyArtist", listOfArtistObjects);
+        outState.putInt("selectedItemPosition", selectedItemPosition);
     }
 
     @Override
@@ -136,6 +140,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         searchResultsAdapter.swapCursor(data);
+        lv.smoothScrollToPosition(selectedItemPosition);
+
     }
 
     @Override

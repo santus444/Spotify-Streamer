@@ -2,24 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/listItemHeight"
+    android:background="@drawable/touch_selector"
+    android:choiceMode="singleChoice"
     android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/list_item_toptenAlbumImage"
         android:layout_width="@dimen/imageWidth"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/imagePadding"
-        android:scaleType="centerCrop"
         android:layout_marginBottom="@dimen/imagePadding"
-        android:layout_marginTop="@dimen/imagePadding" />
+        android:layout_marginTop="@dimen/imagePadding"
+        android:paddingBottom="@dimen/imagePadding"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingLeft="@dimen/textViewPadding"
-        android:paddingRight="@dimen/textViewPadding"
-        android:gravity="center_vertical">
+        android:paddingRight="@dimen/textViewPadding">
 
         <TextView
             android:id="@+id/track_name_textview"

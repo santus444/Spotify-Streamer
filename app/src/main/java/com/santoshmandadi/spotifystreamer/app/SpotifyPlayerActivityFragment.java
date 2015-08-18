@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.santoshmandadi.spotifystreamer.app.data.SpotifyContract;
 import com.squareup.picasso.Picasso;
@@ -84,6 +85,7 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
     int finalDuration, startTime;
     Cursor mCursor;
     Uri mUri;
+    String LOG_TAG = SpotifyPlayerActivityFragment.class.getSimpleName();
     private int PLAYER_LOADER = 2;
     private Runnable UpdateSongTime = new Runnable() {
         public void run() {
@@ -104,6 +106,7 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
 
     public SpotifyPlayerActivityFragment() {
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -205,6 +208,7 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
                     mediaPlayer.setDataSource(mCursor.getString(COL_TRACK_PREVIEW_URL));
                     mediaPlayer.setOnCompletionListener(this);
                     mediaPlayer.setOnSeekCompleteListener(this);
+                    mediaPlayer.setOnErrorListener(this);
                     mediaPlayer.prepareAsync();
                     statusSeekBar.setProgress(0);
                     statusSeekBar.setMax(100);
@@ -324,6 +328,16 @@ public class SpotifyPlayerActivityFragment extends DialogFragment implements Med
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         progressDialog.dismiss();
+        Log.e(LOG_TAG, "Media player error caught WHAT:" + what + " Extra: " + extra);
+        Toast.makeText(getActivity(), "Could not connect to network", Toast.LENGTH_SHORT).show();
+
+        if (!play) {
+            playButton.setImageResource(android.R.drawable.ic_media_play);
+            if (mediaPlayer != null)
+                mediaPlayer.release();
+            play = true;
+            mediaPlayer = null;
+        }
         return true;
     }
 
