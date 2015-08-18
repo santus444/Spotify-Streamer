@@ -10,4 +10,6 @@
     <string name="no_results_message">Sorry, Your search did not yield any results !</string>
     <string name="title_activity_player">Spotify Streamer</string>
     <string name="title_now_playing">Now Playing</string>
+    <string name="share">Share</string>
+
 </resources>
