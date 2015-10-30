@@ -172,7 +172,7 @@ public class SpotifyProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int numberOfRowsImpacted = 0;
+        int numberOfRowsImpacted;
 
         switch (sUriMatcher.match(uri)) {
             case TOP_TRACKS: {
@@ -234,7 +234,7 @@ public class SpotifyProvider extends ContentProvider {
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
-        db.close();
+        //db.close();
         return returnCount;
     }
 
